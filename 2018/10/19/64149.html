@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="linux,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="守望的个人博客" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言Linux常用命令中，有很多用于对文件的压缩或解压，本文将介绍这些解压缩命令中不常见却非常实用的用法。">
+<meta name="keywords" content="linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux常用命令-解压缩篇">
+<meta property="og:url" content="https://www.yanbinghu.com/2018/10/19/64149.html">
+<meta property="og:site_name" content="守望的个人博客">
+<meta property="og:description" content="前言Linux常用命令中，有很多用于对文件的压缩或解压，本文将介绍这些解压缩命令中不常见却非常实用的用法。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-10-05T04:01:06.756Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux常用命令-解压缩篇">
+<meta name="twitter:description" content="前言Linux常用命令中，有很多用于对文件的压缩或解压，本文将介绍这些解压缩命令中不常见却非常实用的用法。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yanbinghu.com/2018/10/19/64149.html">
+
+
+
+
+
+  <title>Linux常用命令-解压缩篇 | 守望的个人博客</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99619048-1', 'auto');
+  ga('send', 'pageview');
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+<link rel="stylesheet" href="/css/prism-atom-dark.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"><script src="/js/prism.js"></script>
+<script src="/js/prism-line-numbers.min.js"></script></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">守望的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">编程珠玑</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-linux">
+          <a href="/categories/linux" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Linux
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-c">
+          <a href="/categories/C" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            C
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-c++">
+          <a href="/categories/Cpp" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            C++
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-数据结构与算法">
+          <a href="/categories/数据结构与算法" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            数据结构与算法
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-书籍">
+          <a href="/books/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br>
+            
+            书籍
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gdb调试指南">
+          <a href="/2019/04/20/41283.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            GDB调试指南
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yanbinghu.com/2018/10/19/64149.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="守望">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="守望的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Linux常用命令-解压缩篇</h2>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-19T22:00:00+08:00">
+                2018-10-19
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-10-05T12:01:06+08:00">
+                2020-10-05
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/10/19/64149.html" class="leancloud_visitors" data-flag-title="Linux常用命令-解压缩篇">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Linux常用命令中，有很多用于对文件的压缩或解压，本文将介绍这些解压缩命令中不常见却非常实用的用法。<br><a id="more"></a></p>
+<h2 id="tar"><a href="#tar" class="headerlink" title="tar"></a>tar</h2><p>tar是linux中最常用的解压缩命令。tar命令可用于处理后缀名为tar，tar.gz，tgz，.tar.Z，tar.bz2的文件。<br>涉及参数说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">-c 建立新的压缩文件</span><br><span class="line">-r 添加文件到已经压缩的文件</span><br><span class="line">-u 添加改变了和现有的文件到已经存在的压缩文件</span><br><span class="line">-x 从压缩的文件中提取文件</span><br><span class="line">-t 显示压缩文件的内容</span><br><span class="line">-z 支持gzip解压文件</span><br><span class="line">-j 支持bzip2解压文件</span><br><span class="line">-v 显示操作过程</span><br><span class="line">-k 保留源有文件不覆盖</span><br><span class="line">-C 切换到指定目录</span><br><span class="line">-f 指定压缩文件</span><br><span class="line"></span><br><span class="line">--delete            删除包中文件</span><br><span class="line">--strip-components  去除目录</span><br><span class="line">--add-file          向包中添加文件</span><br></pre></td></tr></table></figure></p>
+<h3 id="压缩"><a href="#压缩" class="headerlink" title="压缩"></a>压缩</h3><h4 id="归档tar包，不压缩"><a href="#归档tar包，不压缩" class="headerlink" title="归档tar包，不压缩"></a>归档tar包，不压缩</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar -cvf test.tar test1.log test2.log #归档多个文件</span><br><span class="line">tar -cvf test.tar test/* 　#归档test目录下所有文件</span><br><span class="line">tar -cvf test.tar *.log 　#归档所有以.log结尾的文件</span><br></pre></td></tr></table></figure>
+<p>由于这种方式不会进行压缩，仅做了归档，因此<strong>速度极快</strong>，同时占用空间也较大。</p>
+<h4 id="归档并压缩为tar-gz或tar-bz2"><a href="#归档并压缩为tar-gz或tar-bz2" class="headerlink" title="归档并压缩为tar.gz或tar.bz2"></a>归档并压缩为tar.gz或tar.bz2</h4><p>这种方式打包对文件进行了压缩：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zcvf test.tar.gz file1 file2 #打包，并以gzip压缩</span><br><span class="line">tar -jcvf test.tar.bz2 file1 file2 #打包，并以bzip2压缩</span><br></pre></td></tr></table></figure></p>
+<h4 id="查看压缩包中的文件"><a href="#查看压缩包中的文件" class="headerlink" title="查看压缩包中的文件"></a>查看压缩包中的文件</h4><p>如果不想解压，只是想查看压缩包中的文件内容，可以使用-t参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -tvf test.tar #可查看test包中有哪些文件</span><br></pre></td></tr></table></figure></p>
+<h4 id="打包后删除源文件"><a href="#打包后删除源文件" class="headerlink" title="打包后删除源文件"></a>打包后删除源文件</h4><p>有时候在打包后可能需要删除源文件，但一个个删除显得麻烦，我们可以使用—remove-files 选项：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zcvf test.tar.gz test.log --remove-files</span><br></pre></td></tr></table></figure></p>
+<h6 id="打包除指定目录或文件以外的文件"><a href="#打包除指定目录或文件以外的文件" class="headerlink" title="打包除指定目录或文件以外的文件"></a>打包除指定目录或文件以外的文件</h6><p>对于某些目录下的文件，可能只需要打包部分文件，因此可以使用—exclude选项排除一些不需要打包的文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zcvf test.tar.gz --exclude=test/*.log test/* #打包test目录下所有文件，排除以.log结尾的文件</span><br></pre></td></tr></table></figure></p>
+<p>这里用到了—exclude选项，支持通配符和正则表达式，因此也非常强大。</p>
+<h4 id="向压缩包中更新文件"><a href="#向压缩包中更新文件" class="headerlink" title="向压缩包中更新文件"></a>向压缩包中更新文件</h4><p>例如，压缩包中已经打入了test以及其他文件，现在你只想更新压缩包中的test文件，那么你可以使用—add-file选项：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -tf test.tar --add-file=test #只针对tar包</span><br></pre></td></tr></table></figure></p>
+<h4 id="向tar包中增加文件"><a href="#向tar包中增加文件" class="headerlink" title="向tar包中增加文件"></a>向tar包中增加文件</h4><p>向tar包中增加文件可使用-r参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -rf test.tar testfile #在test.tar包中增加文件，只针对tar包</span><br></pre></td></tr></table></figure></p>
+<h4 id="删除压缩包中的文件"><a href="#删除压缩包中的文件" class="headerlink" title="删除压缩包中的文件"></a>删除压缩包中的文件</h4><p>在不解压的情况下，可使用—delete选项删除包中的文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar --delete -f test.tar  test1 #从test.tar中删除test1文件</span><br></pre></td></tr></table></figure></p>
+<h3 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h3><h4 id="解压tar-gz和tar包到当前目录"><a href="#解压tar-gz和tar包到当前目录" class="headerlink" title="解压tar.gz和tar包到当前目录"></a>解压tar.gz和tar包到当前目录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf test.tar.gz</span><br><span class="line">tar -xvf test.tar</span><br></pre></td></tr></table></figure>
+<h4 id="解压到指定目录"><a href="#解压到指定目录" class="headerlink" title="解压到指定目录"></a>解压到指定目录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf test.tar.gz -C dir</span><br><span class="line">tar -xvf test.tar -C dir</span><br></pre></td></tr></table></figure>
+<h4 id="解压包中指定的文件"><a href="#解压包中指定的文件" class="headerlink" title="解压包中指定的文件"></a>解压包中指定的文件</h4><p>例如test.tar.gz包中文件情况如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1.txt</span><br><span class="line">log/</span><br><span class="line">log/1.log</span><br><span class="line">log/2.log</span><br><span class="line">log/2.log</span><br><span class="line">log/4.log</span><br><span class="line">log/5.log</span><br></pre></td></tr></table></figure></p>
+<p>如果我们只需要解压出log目录下的1.log，只需要执行下面的命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf test.tar.gz log/1.log</span><br><span class="line">tar -xvf test.tar.gz log/1.log -C test #将1.log解压到test目录</span><br></pre></td></tr></table></figure></p>
+<h4 id="解压时去掉目录结构"><a href="#解压时去掉目录结构" class="headerlink" title="解压时去掉目录结构"></a>解压时去掉目录结构</h4><p>压缩包中的文件可能存在多级目录，常规方式解压出来后，对应目录也会存在.如果只想要压缩包的文件，可以去掉目录结构（注意：同一文件夹下文件名不能重）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf test.tar.gz --strip-components=1 #去掉一层目录</span><br></pre></td></tr></table></figure></p>
+<h4 id="解压时不覆盖原文件"><a href="#解压时不覆盖原文件" class="headerlink" title="解压时不覆盖原文件"></a>解压时不覆盖原文件</h4><p>当前目录可能已经存在包中的文件，如果不想解压出来的文件覆盖当前已存在的文件，可使用-k参数（会抛出错误信息）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvkf test.tar.gz</span><br></pre></td></tr></table></figure></p>
+<h4 id="特别提醒"><a href="#特别提醒" class="headerlink" title="特别提醒"></a>特别提醒</h4><p>前面所提到的解压或者压缩带的f参数需要放在最后，因为它指定了压缩包名字，否则会出现解压或压缩失败。</p>
+<h2 id="zip-unzip"><a href="#zip-unzip" class="headerlink" title="zip/unzip"></a>zip/unzip</h2><p>zip和unzip命令主要用于处理zip包。</p>
+<h3 id="压缩-1"><a href="#压缩-1" class="headerlink" title="压缩"></a>压缩</h3><p>涉及参数说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-d 从压缩文件内删除指定的文件。</span><br><span class="line">-f 此参数的效果和指定&quot;-u&quot;参数类似，但不仅更新既有文件，如果某些文件原本不存在于压缩文件内，使用本参数会一并将其加入压缩文件中。</span><br><span class="line">-j 只保存文件名称及其内容，而不存放任何目录名称。</span><br><span class="line">-r 递归处理，将指定目录下的所有文件和子目录一并处理。</span><br><span class="line">-u 更换较新的文件到压缩文件内。</span><br><span class="line">-v 显示指令执行过程或显示版本信息。</span><br><span class="line">-y 直接保存符号连接，而非该连接所指向的文件，本参数仅在UNIX之类的系统下有效。</span><br><span class="line">- &lt;压缩效率&gt; 压缩效率是一个介于1-9的数值。</span><br></pre></td></tr></table></figure></p>
+<h4 id="压缩文件"><a href="#压缩文件" class="headerlink" title="压缩文件"></a>压缩文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zip -r test.zip test/ #打包test目录下的文件</span><br><span class="line">zip -rj test.zip test/ #打包test目录下文件，且压缩包不带test目录</span><br></pre></td></tr></table></figure>
+<h4 id="指定压缩率打包文件"><a href="#指定压缩率打包文件" class="headerlink" title="指定压缩率打包文件"></a>指定压缩率打包文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -r8 test.zip test/* #数值（1-9）越大，压缩率越高，耗时越长</span><br></pre></td></tr></table></figure>
+<h4 id="打包符号链接文件"><a href="#打包符号链接文件" class="headerlink" title="打包符号链接文件"></a>打包符号链接文件</h4><p>前面的命令只能打包普通文件，如果想要打包符号链接文件，则需要使用参数-y：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip  -ry test.zip test</span><br></pre></td></tr></table></figure></p>
+<h4 id="向压缩包中增加或更新文件"><a href="#向压缩包中增加或更新文件" class="headerlink" title="向压缩包中增加或更新文件"></a>向压缩包中增加或更新文件</h4><p>有时候需要向压缩包中增加文件，但又不想重新解压打包，可以使用参数-u：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -u test.zip test2 #向test.zip 包中增加test2文件</span><br></pre></td></tr></table></figure></p>
+<h6 id="压缩时加密"><a href="#压缩时加密" class="headerlink" title="压缩时加密"></a>压缩时加密</h6><p>压缩时如果需要对压缩包进行加密，可使用-P参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -r test.zip test1 test -P 66666 #使用密码66666加密</span><br></pre></td></tr></table></figure></p>
+<h4 id="删除压缩包的特定文件"><a href="#删除压缩包的特定文件" class="headerlink" title="删除压缩包的特定文件"></a>删除压缩包的特定文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -d test.zip test  #删除test.zip包中的test文件</span><br></pre></td></tr></table></figure>
+<h3 id="解压-1"><a href="#解压-1" class="headerlink" title="解压"></a>解压</h3><p>涉及参数说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-l 显示压缩文件内所包含的文件</span><br><span class="line">-j 只保存文件名称及其内容，而不存放任何目录名称。</span><br><span class="line">-o 以压缩文件内拥有最新更改时间的文件为准，将压缩文件的更改时间设成和该</span><br><span class="line">-v 显示指令执行过程或显示版本信息。</span><br><span class="line">-d 指定解压目录，目录不存在会创建</span><br></pre></td></tr></table></figure></p>
+<h4 id="查看压缩包中的文件信息"><a href="#查看压缩包中的文件信息" class="headerlink" title="查看压缩包中的文件信息"></a>查看压缩包中的文件信息</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">unzip -l test.zip #可以看到压缩包中的文件名，日期等信息</span><br><span class="line">unzip -v test.zip #查看更多信息，例如crc校验信息等</span><br></pre></td></tr></table></figure>
+<h4 id="解压压缩包"><a href="#解压压缩包" class="headerlink" title="解压压缩包"></a>解压压缩包</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip -o test.zip -d dir #讲test.zip解压到dir目录</span><br></pre></td></tr></table></figure>
+<h4 id="解压包中指定的文件-1"><a href="#解压包中指定的文件-1" class="headerlink" title="解压包中指定的文件"></a>解压包中指定的文件</h4><p>如果不知道需要解压的文件名，可先查看包中的文件，然后使用下面的方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">unzip -o test.zip &quot;1.log&quot; -d dir #解压包中的1.log文件到dir目录</span><br><span class="line">unzip -o tet.zip &quot;*.log&quot; -d dir  #解压包中所有的log文件</span><br></pre></td></tr></table></figure></p>
+<h4 id="解压时去掉目录结构-1"><a href="#解压时去掉目录结构-1" class="headerlink" title="解压时去掉目录结构"></a>解压时去掉目录结构</h4><p>压缩包中有多层目录结构，普通解压仍然会保留目录结构，如果只想要压缩包中的文件，可以使用-j参数:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -oj test.zip -d ./temp</span><br></pre></td></tr></table></figure></p>
+<h4 id="解压jar包"><a href="#解压jar包" class="headerlink" title="解压jar包"></a>解压jar包</h4><p>jar包是java归档包，但同样可用unzip解压查看里面的文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip -o java.jar -d dir</span><br></pre></td></tr></table></figure></p>
+<h2 id="gzip"><a href="#gzip" class="headerlink" title="gzip"></a>gzip</h2><p>涉及参数说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-k 保留源文件</span><br><span class="line">-d 解开压缩文件</span><br><span class="line">-r 递归处理，将指定目录下的所有文件及子目录一并处理</span><br><span class="line">-v 显示指令执行过程</span><br></pre></td></tr></table></figure></p>
+<p>tar命令带有-z参数，并且打包成tar.gz文件时，便调用gzip进行了压缩。gzip对文本的压缩率约有60%~70%，压缩包文件常以gz为后缀。使用-k参数保留源文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gzip -k ./* #当前目录下所有文件进行压缩，每个文件一个gz包</span><br><span class="line">gzip -rkv ./* 递归压缩</span><br></pre></td></tr></table></figure></p>
+<p>解压也很简单：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gzip -dv test.gz</span><br></pre></td></tr></table></figure></p>
+<h2 id="bzip2"><a href="#bzip2" class="headerlink" title="bzip2"></a>bzip2</h2><p>tar命令使用-j参数将文件打包为tar.bz2时，便调用了bzip2进行压缩。bzip2压缩或解压后，会将源文件删除。如果需要保留源文件，可使用-k参数:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bzip2 -zk test  #压缩test文件</span><br><span class="line">bzip2 -dk test.bz2  #解压</span><br></pre></td></tr></table></figure>
+<h2 id="rar-unrar"><a href="#rar-unrar" class="headerlink" title="rar/unrar"></a>rar/unrar</h2><p>rar和unrar命令并非linux发行版自带命令，需要另外安装。常见用法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rar a test.tar test  #将test文件压缩为test.tar</span><br><span class="line">rar e test.rar       #解压test.tar</span><br><span class="line">unrar x test.rar     #解压test.tar</span><br></pre></td></tr></table></figure></p>
+<h2 id="压缩率比较"><a href="#压缩率比较" class="headerlink" title="压缩率比较"></a>压缩率比较</h2><p>压缩率一般来说：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar.bz2&gt;tar.gz&gt;zip&gt;tar</span><br></pre></td></tr></table></figure></p>
+<p>压缩率越高，压缩以及解压的时间也就越长。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>对文件进行压缩能够节省磁盘空间，进行网络传输时，也能节省带宽，但是需要注意的是，空间和时间是需要根据实际应用进行权衡的。解压缩命令较多，为避免在其他平台使用不便，可选择常用命令进行压缩文件。有任何补充或建议，欢迎留言。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/pictures/qrcode.jpg" alt="守望 wechat" style="width: 200px; max-width: 100%;">
+    <div>关注公众号[编程珠玑]获取更多原创技术文章</div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>出入相友，守望相助！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/wechatpay.jpg" alt="守望 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/alipay.jpg" alt="守望 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    守望
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.yanbinghu.com/2018/10/19/64149.html" title="Linux常用命令-解压缩篇">https://www.yanbinghu.com/2018/10/19/64149.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本文为原创文章，版权归<a href="https://www.yanbinghu.com">守望</a>所有，并采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请<a href="mailto:yanbinghu@yanbinghu.com">联系本人</a>！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/16/23869.html" rel="next" title="C语言入坑指南-“悬挂”else">
+                <i class="fa fa-chevron-left"></i> C语言入坑指南-“悬挂”else
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/21/37870.html" rel="prev" title="PC-lint-发现bugs">
+                PC-lint-发现bugs <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- Go to www.addthis.com/dashboard to customize your tools -->
+<div class="addthis_inline_share_toolbox">
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=2134076" async="async"></script>
+</div>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+ <div id="gitalk-container"></div>
+  
+
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="守望">
+            
+              <p class="site-author-name" itemprop="name">守望</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">180</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:yanbinghu@yanbinghu.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.yanbinghu.com/about/" target="_blank" title="公众号">
+                    
+                      <i class="fa fa-fw fa-globe"></i>公众号</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-globe"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.javazhiyin.com" title="Java知音" target="_blank">Java知音</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.strongerhuang.com" title="EmbeddedDevelop" target="_blank">EmbeddedDevelop</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+<div class="widget-wrap">
+    <h3 class="widget-title">目录</h3>
+	<div class="category-all-page">
+		<div class="category-all">
+		  <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C</a><span class="category-list-count">52</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cpp/">Cpp</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go/">Go</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shell/">Shell</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gdb/">gdb</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/leetcode/">leetcode</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><span class="category-list-count">41</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/resource/">resource</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/windows/">windows</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/单元测试/">单元测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工作面试/">工作面试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据结构与算法/">数据结构与算法</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/程序员/">程序员</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络编程/">网络编程</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/读书/">读书</a><span class="category-list-count">10</span></li></ul>
+		</div>
+	</div>
+</div>
+
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tar"><span class="nav-number">2.</span> <span class="nav-text">tar</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩"><span class="nav-number">2.1.</span> <span class="nav-text">压缩</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#归档tar包，不压缩"><span class="nav-number">2.1.1.</span> <span class="nav-text">归档tar包，不压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#归档并压缩为tar-gz或tar-bz2"><span class="nav-number">2.1.2.</span> <span class="nav-text">归档并压缩为tar.gz或tar.bz2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看压缩包中的文件"><span class="nav-number">2.1.3.</span> <span class="nav-text">查看压缩包中的文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打包后删除源文件"><span class="nav-number">2.1.4.</span> <span class="nav-text">打包后删除源文件</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#打包除指定目录或文件以外的文件"><span class="nav-number">2.1.4.0.1.</span> <span class="nav-text">打包除指定目录或文件以外的文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向压缩包中更新文件"><span class="nav-number">2.1.5.</span> <span class="nav-text">向压缩包中更新文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向tar包中增加文件"><span class="nav-number">2.1.6.</span> <span class="nav-text">向tar包中增加文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除压缩包中的文件"><span class="nav-number">2.1.7.</span> <span class="nav-text">删除压缩包中的文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解压"><span class="nav-number">2.2.</span> <span class="nav-text">解压</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解压tar-gz和tar包到当前目录"><span class="nav-number">2.2.1.</span> <span class="nav-text">解压tar.gz和tar包到当前目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解压到指定目录"><span class="nav-number">2.2.2.</span> <span class="nav-text">解压到指定目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解压包中指定的文件"><span class="nav-number">2.2.3.</span> <span class="nav-text">解压包中指定的文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解压时去掉目录结构"><span class="nav-number">2.2.4.</span> <span class="nav-text">解压时去掉目录结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解压时不覆盖原文件"><span class="nav-number">2.2.5.</span> <span class="nav-text">解压时不覆盖原文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特别提醒"><span class="nav-number">2.2.6.</span> <span class="nav-text">特别提醒</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#zip-unzip"><span class="nav-number">3.</span> <span class="nav-text">zip/unzip</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩-1"><span class="nav-number">3.1.</span> <span class="nav-text">压缩</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#压缩文件"><span class="nav-number">3.1.1.</span> <span class="nav-text">压缩文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#指定压缩率打包文件"><span class="nav-number">3.1.2.</span> <span class="nav-text">指定压缩率打包文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打包符号链接文件"><span class="nav-number">3.1.3.</span> <span class="nav-text">打包符号链接文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向压缩包中增加或更新文件"><span class="nav-number">3.1.4.</span> <span class="nav-text">向压缩包中增加或更新文件</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#压缩时加密"><span class="nav-number">3.1.4.0.1.</span> <span class="nav-text">压缩时加密</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除压缩包的特定文件"><span class="nav-number">3.1.5.</span> <span class="nav-text">删除压缩包的特定文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解压-1"><span class="nav-number">3.2.</span> <span class="nav-text">解压</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看压缩包中的文件信息"><span class="nav-number">3.2.1.</span> <span class="nav-text">查看压缩包中的文件信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解压压缩包"><span class="nav-number">3.2.2.</span> <span class="nav-text">解压压缩包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解压包中指定的文件-1"><span class="nav-number">3.2.3.</span> <span class="nav-text">解压包中指定的文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解压时去掉目录结构-1"><span class="nav-number">3.2.4.</span> <span class="nav-text">解压时去掉目录结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解压jar包"><span class="nav-number">3.2.5.</span> <span class="nav-text">解压jar包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gzip"><span class="nav-number">4.</span> <span class="nav-text">gzip</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bzip2"><span class="nav-number">5.</span> <span class="nav-text">bzip2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rar-unrar"><span class="nav-number">6.</span> <span class="nav-text">rar/unrar</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#压缩率比较"><span class="nav-number">7.</span> <span class="nav-text">压缩率比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">守望</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+<div>
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1277113960'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s5.cnzz.com/z_stat.php%3Fid%3D1277113960%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/gitalk/gitalk.css">
+  
+  <script src="/lib/gitalk/gitalk.min.js"></script>
+   <script type="text/javascript">
+		var gitalk = new Gitalk({
+		  clientID: 'ede3b4c45efafd567659',
+		  clientSecret: 'a1b520b96a030165bd3bde65c37121e82e3509b3',
+		  repo: 'BlogComments',
+		  owner: 'yanbinghu',
+		  admin: ['yanbinghu'], 
+		  id: location.pathname,
+		  distractionFreeMode: 'true'
+		})
+		gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("3QkijkMW8MUrMYO01qifxcDz-gzGzoHsz", "M3hmJ4JUXBhFXYgvyExsbFTP");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.3"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.3"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+</body>
+</html>

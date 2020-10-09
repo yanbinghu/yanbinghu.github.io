@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="linux,读书,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="守望的个人博客" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言《深入理解计算机系统》值得每位程序员一读，看完之后将会对整个计算机体系有一个直观的认识。">
+<meta name="keywords" content="linux,读书">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《深入理解计算机系统》摘要">
+<meta property="og:url" content="https://www.yanbinghu.com/2019/05/01/5629.html">
+<meta property="og:site_name" content="守望的个人博客">
+<meta property="og:description" content="前言《深入理解计算机系统》值得每位程序员一读，看完之后将会对整个计算机体系有一个直观的认识。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-10-05T04:01:06.760Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《深入理解计算机系统》摘要">
+<meta name="twitter:description" content="前言《深入理解计算机系统》值得每位程序员一读，看完之后将会对整个计算机体系有一个直观的认识。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yanbinghu.com/2019/05/01/5629.html">
+
+
+
+
+
+  <title>《深入理解计算机系统》摘要 | 守望的个人博客</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99619048-1', 'auto');
+  ga('send', 'pageview');
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+<link rel="stylesheet" href="/css/prism-atom-dark.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"><script src="/js/prism.js"></script>
+<script src="/js/prism-line-numbers.min.js"></script></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">守望的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">编程珠玑</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-linux">
+          <a href="/categories/linux" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Linux
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-c">
+          <a href="/categories/C" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            C
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-c++">
+          <a href="/categories/Cpp" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            C++
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-数据结构与算法">
+          <a href="/categories/数据结构与算法" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            数据结构与算法
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-书籍">
+          <a href="/books/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br>
+            
+            书籍
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gdb调试指南">
+          <a href="/2019/04/20/41283.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            GDB调试指南
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yanbinghu.com/2019/05/01/5629.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="守望">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="守望的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">《深入理解计算机系统》摘要</h2>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-01T08:40:00+08:00">
+                2019-05-01
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-10-05T12:01:06+08:00">
+                2020-10-05
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书/" itemprop="url" rel="index">
+                    <span itemprop="name">读书</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/05/01/5629.html" class="leancloud_visitors" data-flag-title="《深入理解计算机系统》摘要">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>《深入理解计算机系统》值得每位程序员一读，看完之后将会对整个计算机体系有一个直观的认识。<br><a id="more"></a></p>
+<h2 id="第一章计算机系统漫游"><a href="#第一章计算机系统漫游" class="headerlink" title="第一章计算机系统漫游"></a>第一章计算机系统漫游</h2><ul>
+<li>只有ascii字符构成的文件称为文本文件，所有其它文件都称为二进制文件。</li>
+<li>c语言是古怪的，有缺陷的，但同时也是一个巨大的成功，为什么会成功呢</li>
+</ul>
+<ul>
+<li>c语言与unix操作系统关系密切</li>
+<li>c语言小而简单</li>
+<li>c语言是为实践目的设计的</li>
+</ul>
+<p>有一些重要的原因促使程序员必须知道编译系统是如何工作的</p>
+<ul>
+<li>优化程序性能</li>
+<li>理解链接时出现的错误</li>
+<li><p>避免安全漏洞</p>
+</li>
+<li><p>shell是一个命令行解释器，它提出一个提示符，等待输入一个命令行，然后执行这个命令。如果该命令行的第一个单词不是一个内置的shell命令，那么shell就会假设这是一个可执行文件的名字，它将加载并运行这个文件。</p>
+</li>
+<li><p>贯穿整个系统的是一组电子管道，称作总线。</p>
+</li>
+<li><p>io设备是系统与外部世界的联系通道。</p>
+</li>
+<li><p>主存是一个临时存储设备，在处理器执行程序时，用来存放程序和程序处理的数据。<br>处理器，是解释或执行存储在主存中指令的引擎。</p>
+</li>
+<li><p>利用直接存储器存取，数据可以不通过处理器而直接从磁盘到达主存。</p>
+</li>
+</ul>
+<ul>
+<li>通过让高速缓存里存放可能经常访问的数据，大部分的内存操作都能在快速的高速缓存中完成</li>
+</ul>
+<ul>
+<li><p>每个计算机系统中的存储设备都被组织成了一个存储器层次结构。</p>
+</li>
+<li><p>操作系统有两个基本功能<br>防止硬件被失控的应用程序滥用，向应用程序提供简单一致的机制来控制复杂而又通常大不相同的低级硬件设备。操作系统通过基本的抽象概念(进程，虚拟内存和文件)来实现这两个功能。</p>
+</li>
+</ul>
+<ul>
+<li>文件是对i/o设备的抽象表示，虚拟内存是对主存和磁盘i/o设备的抽象表示，进程则是对处理器，主存和i/o设备的抽象表示。</li>
+</ul>
+<ul>
+<li><p>进程是对操作系统对一个正在运行的程序的一种抽象。</p>
+</li>
+<li><p>进程并发运行，则是说一个进程的指令和另一个进程的指令是交错执行的。操作系统实现这种交错执行的机制称为上下文切换。</p>
+</li>
+<li><p>操作系统保持跟踪进程运行所需的所有状态信息。这种状态，也就是上下文。</p>
+</li>
+<li><p>当操作系统决定要把控制权从当前进程转移到某个新进程时，就会进行上下文切换，即保存当前进程的上下文，恢复新进程的上下文，然后将控制权传递到新进程。新进程就会从它上次停止的地方开始。</p>
+</li>
+<li><p>虽然我们对系统的一个主要部分做出了重大改进，但是获得的系统加速却明显小于这部分的加速比。这就是amdahl定律的主要观点——想要显著加速整个系统。必须提升全系统中相当大的部分的速度。</p>
+</li>
+</ul>
+<h2 id="第二章信息的表示处理"><a href="#第二章信息的表示处理" class="headerlink" title="第二章信息的表示处理"></a>第二章信息的表示处理</h2><ul>
+<li><p>每台计算机都有一个字长，指明指针数据的标称大小。因为虚拟地址是以这样的一个字来编码的。所以字长决定的最重要的系统参数就是虚拟地址空间的最大大小。</p>
+</li>
+<li><p>32位字长限制虚拟地址空间为4GB</p>
+</li>
+</ul>
+<ul>
+<li><p>最低有效字节在最前面的方式，称为小端法，最高有效字节在最前面的方式，称为大端法。</p>
+</li>
+<li><p>逻辑右移是在左端补k个0，而算术右移是在左端补k个最高有效位的值</p>
+</li>
+<li><p>java中，正常的右移运算符&gt;&gt;被定义为执行算术右移，特别的运算符&gt;&gt;&gt;被指定为执行逻辑右移</p>
+</li>
+</ul>
+<ul>
+<li><p>几乎所有的编译器/机器组合都对有符号数使用算术右移，且许多程序员也都假设机器会使用这种右移，另一方面，对于无符号数，右移必须是逻辑的。</p>
+</li>
+<li><p>整型数据类型中，唯一一个与机器相关的取值范围是大小指示符long的</p>
+</li>
+<li><p>取值范围不是对称的，负数的范围正数的范围大1。</p>
+</li>
+<li><p>c和c++都支持有符号和无符号数，java只支持有符号数。</p>
+</li>
+<li><p>c语言标准并没有要求用补码形式来表示有符号整数，但是几乎所有的机器都是这么做的。</p>
+</li>
+<li><p>有符号数还可以通过反码和原码的方式表示。</p>
+</li>
+<li><p>要将一个无符号数转换为一个更大的数据类型，我们只要简单地在表示的开头添加零，这种运算称为零扩展。</p>
+</li>
+<li><p>要将一个补码数字转换为一个更大的数据类型，可以执行一个符号扩展，在表示中添加最高有效位的值。例如sx=-12345       cf  c7，扩展后x=-12345    ff ff cf c7</p>
+</li>
+<li><p>算术运算溢出，是指完整的整数结果不能放到数据类型的字长限制中去。</p>
+</li>
+<li><p>整数乘法指定相当慢，因此，编译器使用了一项重要的优化，试着用移位和加法运算的组合来代替乘以常数因子的乘法。</p>
+</li>
+</ul>
+<ul>
+<li><p>整数除法比整数乘法更慢。</p>
+</li>
+<li><p>ieee浮点标准用V=（-1）^s×M×2^E<br>符号（sign）s决定这数是负数（s=1）还是正数（s=0），而对于数值0的符号位解释作为特殊情况处理。</p>
+</li>
+<li><p>尾数（signficand）M是一个二进制小数，它的范围是1～2-ξ或者是0～1-ξ</p>
+</li>
+<li><p>阶码（exponent）E的作用是对浮点数加权，这个权重是2的E次幂（可能是负数）</p>
+</li>
+<li><p>将浮点数的位表示划分为三个字段<br>一个单独的符号位，直接编码符号s<br>k位的阶段字段exp=ek-1e0编码阶码E<br>n位小数字段frac=fn-1…f0编码尾数M，但是编码出来的值也依赖于阶码字段的值是否等于0</p>
+</li>
+<li><p>在单精度浮点格式（c语言中的float）中，s，exp和frac字段分别为1位，8位和23位，……分别为1位，11位和52位</p>
+</li>
+<li><p>阶码的值决定了这个数是格式化的，非格式化的或特殊值。</p>
+</li>
+<li><p>ieee浮点格式定义了四种不同的舍入方式。向偶数舍入，向零舍入，向下舍入，向上舍入。</p>
+</li>
+<li><p>为什么有向偶数舍入呢？计算平均值的情况。如果总是把两个可表示值中间的数字向下舍入，那么舍入后的一组数的平均值将比这些数本身的平均值略低一些。向偶数舍入的大多数现实情况中避免了这种统计偏差。</p>
+</li>
+<li><p>从float或者double转换成int，值将会向零舍入。</p>
+</li>
+</ul>
+<h2 id="第三章-程序的机器级表示"><a href="#第三章-程序的机器级表示" class="headerlink" title="第三章 程序的机器级表示"></a>第三章 程序的机器级表示</h2><ul>
+<li><p>相对于c代码表示的计算操作，优化编译器能够重新排列执行顺序，消除不必要的计算，用快速操作代替慢速操作。</p>
+</li>
+<li><p>超线程，可以在一个处理器上同时运行两个程序。2004年，pentium 4E开始支持。</p>
+</li>
+<li><p>c语言中的聚合类型，例如数组和结构，在机器代码中用一组连续的字节来表示。即使是对标量数据类型，汇编代码也不区分有符号或无符号，不区分各种类型的指针，甚至于不区分指针和整数。</p>
+</li>
+<li><p>程序内存包含程序可执行机器代码，操作系统需要的一些信息，用来管理过程调用和返回的运行时栈，以及用户分配的内存块。</p>
+</li>
+<li><p>一条机器指令只执行一个非常基本的操作。</p>
+</li>
+<li><p>反汇编目标文件objdump  -d  output.o</p>
+</li>
+</ul>
+<p>+x86-64的指令长度从1到15个字节不等。常用以及操作数较少的指令所需字节数少，而不太常用或操作数较多的指令所需字节数较多？</p>
+<p>+反汇编器只是基于机器代码文件中的字节序列来确定汇编代码，它不需要访问该程序的源代码或汇编代码。</p>
+<ul>
+<li><p>指令结尾的“q”是大小指示符，用来表明操作数的大小。例如，callq表明其操作数为4字。<br>1+ 6位为一字（word）。</p>
+</li>
+<li><p>b一字节 1字节</p>
+</li>
+<li>w一字  2字节</li>
+<li>l一双字 或双精度4字节或8字节（整型操作和浮点数操作指令和寄存器不同，不会产生歧义。）</li>
+<li>q一四字 8字节</li>
+<li><p>s一单精度 4字节</p>
+</li>
+<li><p>指令的操作数分为三种类型。<br>第一种是立即数。用来表示常数值。在att格式的汇编代码中，立即数的书写方式是“$”后面跟一个用标准c表示法表示的整数。比如$0x1C<br>第二种类型是寄存器。表示寄存器的内容。<br>第三种是内存引用，它根据计算出来的地址访问某个内存位置。而寻址方式有多种。</p>
+</li>
+<li><p>最频繁使用的指令是将数据从一个位置复制到另一个位置的指令。</p>
+</li>
+<li><p>访问寄存器比访问内存要快的多。</p>
+</li>
+<li><p>栈向下增长，栈顶元素是所有栈中元素地址中最低的。</p>
+</li>
+<li><p>机器代码对于有符号和无符号两种情况都是用一样的指令，这是因为许多算术运算对无符号和补码算术都有一样的位级行为。有些情况需要使用不同的指令来处理有符号和无符号操作，例如，使用不同版本的右移，除法，和乘法指令。</p>
+</li>
+</ul>
+<ul>
+<li>跳转指令有几种不同的编码，但是常用的都是PC相对的。</li>
+</ul>
+<ul>
+<li><p>实现条件操作的传统控制方法是通过使用控制的条件转移，当条件满足时，程序沿着执行路径执行，而当条件不满足时，就右另一条路径。这种机制简单而通用，但是在现代处理器上，它可能会非常低效。</p>
+</li>
+<li><p>一种替代的策略是使用数据的条件转移。这种方法计算一个条件操作的两种结果，然后再根据条件是否满足，从中选择选取一个。</p>
+</li>
+<li><p>条件传送指令更符合现代处理器的性能特性。</p>
+</li>
+<li><p>处理器采用非常精密的分支预测逻辑来猜测每条跳转指令是否会执行，只要它的猜测还比较可靠，指令流水线充满着指令。另外一方面，错误预测一个跳转，要求处理器丢掉它为该跳转指令后所有指令已做的工作，然后再开始用从正确的位置处起始的指令去填充流水线。这样一个错误预测会招致很严重的惩罚，浪费大约15～30个时钟周期，导致程序性能严重下降。</p>
+</li>
+</ul>
+<ul>
+<li><p>只有当两个表达式都很容易计算时，它才会使用条件传送。</p>
+</li>
+<li><p>理解产生的汇编代码与原始源代码之间的关系，环境是找到程序值和寄存器之间的映射关系。</p>
+</li>
+<li><p>switch开关语句可以根据一个整数索引值进行多重分值。它通过使用跳转表这种数据结构使得实现更加高效。跳转表示一个数组，表项i示一个代码段的地址，这个代码段实现党开关索引值等于i时程序应该采取的动作。与使用if else语句相比，使用跳转表的优点是执行开关语句的时间与开关情况的数量无关。</p>
+</li>
+</ul>
+<ul>
+<li><p>c语言的struct声明创建一个数据类型，将可能不同的类型的对象聚合到一个对象中，用名字来引用结构的各个组成部分。类似于数组的实现，结构的所有组成都存放在内存中的一段连续的区域内，而指向结构的指针就是结构第一个字节的地址。</p>
+</li>
+<li><p>结构的各个字段的选取完全是在编译时处理的。机器代码不包含关于字段声明或字段名字的信息。</p>
+</li>
+<li><p>无论数据是否对齐，x86-64硬件都能正确工作，不过，intel还是建议要对齐数据以提高内存系统的性能。</p>
+</li>
+</ul>
+<ul>
+<li><p>对齐原则是任何k字节的基本对象的地址必须是k的倍数。</p>
+</li>
+<li><p>许多计算机对基本数据类型的合法地址做了一些限制，要求某种类型对象的地址必须是某个值通常是2,4,或8（）得倍数。</p>
+</li>
+<li><p>对于大多数x86-64指令来说，保持数据对其能够提高效率，但它不会影响程序的行为</p>
+</li>
+</ul>
+<p>将指针从一种类型强制转换成另一种类型，只改变他的类型，而不改变它的值</p>
+<p>函数指针的值是改函数机器代码表示中第一条指令的地址</p>
+<p>*操作符用于间接引用指针</p>
+<ul>
+<li><p>蠕虫和病毒都试图在计算机中传播它们自己的代码段。蠕虫可以自己运行，并且能够将自己的等效副本传播到其它机器。病毒能够将自己添加到包括操作系统在内的其它程序中，但它不能独立运行？</p>
+</li>
+<li><p>缓冲区一个更加致命的使用就是让程序执行它本来不愿意执行的函数。</p>
+</li>
+<li><p>对抗缓冲区溢出攻击</p>
+</li>
+<li><p>1.栈随机化，地址空间布局随机化，198页，使得栈的位置在程序每次运行时都有变化</p>
+</li>
+<li><p>栈破坏检测，插入金丝雀值</p>
+</li>
+<li><p>限制可执行代码区域</p>
+</li>
+<li><p>变长数组意味着在编译时无法确定栈帧的大小</p>
+</li>
+<li><p>c对于数组引用不进行任何边界检查，而且局部变量和状态信息都存放在栈中。这两种情况结合到一起就能导致严重的程序错误，对越界的数组元素的写操作会破坏存储在栈中的状态信息。</p>
+</li>
+</ul>
+<ul>
+<li>把浮点数转换成整数时，指令会进行截断，把值向0进行舍入，这是c和大多数其他编程语言的要求。</li>
+</ul>
+<h2 id="第5章"><a href="#第5章" class="headerlink" title="第5章"></a>第5章</h2><ul>
+<li><p>程序优化的第一步就是消除不必要的工作，让代码尽可能有效地执行所期望任务。这包括消除不必要的函数调用,条件测试和内存引用。</p>
+</li>
+<li><p>了解处理器的运作，我们就可以进行程序优化的第二步，利用处理器提供的指令级并行能力，同时执行多条指令。</p>
+</li>
+<li><p>gcc优化级别越高，使用的优化量也更大，这样做可以进一步提高程序的性能，但是也能增加程序的规模，也可能使标准的调试工具更难对程序调试。</p>
+</li>
+<li><p>我们会发现可以写出的c代码，即使用-o1选项编译得到的性能，也比用可能的最高优化等级编译一个原始的版本得到的性能好。</p>
+</li>
+<li><p>简单的使用命令行选项-O1，就会进行一些基本的优化。</p>
+</li>
+</ul>
+<ul>
+<li><p>边界检查降低了程序出错的机会，但是它也会减缓程序的执行。</p>
+</li>
+<li><p>对于会改变在哪里调用函数或调用多少次的变换，编译器通常会非常小心。他们不能可靠地发现一个函数是否会有副作用，因而假设函数会有副作用。</p>
+</li>
+<li><p>消除循环的低效率。<br>优化类型，代码移动。<br>这类优化包括识别要多次执行（例如在循环里）但是计算结果不会改变的计算。因而可以将计算代码移动到代码前面不会被多次求值的部分。（strlen）</p>
+</li>
+<li><p>减少过程调用</p>
+</li>
+</ul>
+<ul>
+<li>消除不必要的内存引用<br>把结果累积在临时变量中。临时变量可能会保存在寄存器中</li>
+</ul>
+<p>在实际的处理器中，是同时对多条指令求值的，这个现象称为指令级并行。</p>
+<h2 id="第六章"><a href="#第六章" class="headerlink" title="第六章"></a>第六章</h2><p>在程序中利用局部性</p>
+<h2 id="第七章"><a href="#第七章" class="headerlink" title="第七章"></a>第七章</h2><p>目标文件有三种格式：</p>
+<ul>
+<li>可重定位目标文件</li>
+<li>可执行目标文件</li>
+<li><p>共享目标文件</p>
+</li>
+<li><p>每个可重定位目标文件在.symtab中都有用一张符号表（不需要-g编译选项，除非strip掉才会没有符号表）<br>.debug -g选项编译时才会有这张表<br>.line -g选项编译时会有有行号和.text节中机器指令之间的映射。<br>.symtab中的符号表不包含对应于本地费静态程序变量的任何符号</p>
+</li>
+</ul>
+<p>函数和已经初始化的全局变量是强符号，未初始化的全局变量是弱符号。</p>
+<ul>
+<li><p>Linux链接器使用下面的规则来处理多重定义的符号名：<br>规则1;不允许有多个同名的强符号。<br>规则2：如果一个强符号和多个弱符号同名，那么选择强符号<br>规则3：如果有多个弱符号同名，那么从这些弱符号中任意选择一个。<br>静态库，在链接时，链接器将只复制被程序引用的目标模块，这就减少了可执行文件在磁盘和内存中的大小。</p>
+</li>
+<li><p>生成静态库 ar rcs lib<strong>.a </strong>.o<br>gcc -static参数告诉编译器驱动程序，链接器应该构造一个完全链接的可执行目标文件，它可以加载到内存并运行，在加载时无需更进一步的链接。</p>
+</li>
+<li><p>在符号解析阶段，链接器从左到右按照它们在编译器驱动程序命令行上出现的顺序来扫描可重定位目标文件和存档文件，但是，如果一个符号的库出现在引用这个符号的目标文件之前，那么引用就不能被解析，链接就会失败。</p>
+</li>
+<li><p>关于库的一般准则是将它们放在命令行的结尾。如果各个库的成员是相互独立的，那么这些库就可以任务顺序放置在命令行的结尾处。</p>
+</li>
+</ul>
+<h4 id="3-3-重定位"><a href="#3-3-重定位" class="headerlink" title="3.3 重定位"></a>3.3 重定位</h4><p>重定位由两步组成，重定位节和符号定位，重定位节中的符号引用</p>
+<h2 id="第八章异常控制流"><a href="#第八章异常控制流" class="headerlink" title="第八章异常控制流"></a>第八章异常控制流</h2><p>异常的类别</p>
+<ul>
+<li>中断  来自io设备的信号</li>
+<li>陷阱  有意的异常</li>
+<li>故障 潜在可恢复的错误</li>
+<li><p>终止 不可恢复的错误</p>
+</li>
+<li><p>每个系统调用都有一个唯一的整数号，对应于一个到内核中跳转表的偏移量。</p>
+</li>
+</ul>
+<p>所有到linux系统调用的参数都是通过通用寄存器而不是栈传递的。</p>
+<p>进程会因为三种原因终止</p>
+<ul>
+<li>收到一个信号，该信号的默认行为是终止</li>
+<li>从主程序返回</li>
+<li>调用exit函数</li>
+</ul>
+<h2 id="第九章-虚拟内存"><a href="#第九章-虚拟内存" class="headerlink" title="第九章 虚拟内存"></a>第九章 虚拟内存</h2><ul>
+<li><p>bss内存位置总是被加载器初始化为0，但堆中的数据不是这样的，需要自己将其初始化</p>
+</li>
+<li><p>虚拟页面包括未分配的，缓存的，未缓存的</p>
+</li>
+<li>DRAM缓存不命中称为缺页</li>
+<li>如果工作集的大小超出了物理内存的大小，那么将会产生抖动</li>
+<li>虚拟内存大大简化了内存管理，并提供了一种自然的保护内存的方法</li>
+<li>vm简化了链接，加载，和共享 </li>
+<li>分配的目标，1最大化吞吐率，最大化内存利用率</li>
+<li>内部碎片：已分配块大小和它们的有效载荷大小之差的和。内部碎片的数量只取决于以前请求的模式和分配器的实现方式</li>
+<li>外部碎片是当空闲内存合计起来足够满足一个分配请求，但是没有一个单独的空闲快足够大来处理这个请求时发生的。<h2 id="第十章-系统级IO"><a href="#第十章-系统级IO" class="headerlink" title="第十章 系统级IO"></a>第十章 系统级IO</h2></li>
+<li><p>无缓冲的输入输出函数。对于从网络读写二进制数据尤其有用</p>
+</li>
+<li><p>带缓冲的输入函数，从文件中读取文本行和二进制数据。</p>
+</li>
+<li>首次适配，从头开始搜索，找到第一个合适的空闲块</li>
+<li><h2 id="第十二章-并发编程"><a href="#第十二章-并发编程" class="headerlink" title="第十二章 并发编程"></a>第十二章 并发编程</h2>1.基于进程的并发编程<br>2.基于I/O多路复用的并发编程<br>3.基于线程的并发编程</li>
+</ul>
+<p>终止线程<br>1.顶层线程例程返回时，线程会隐式的终止<br>2.调用pthread_exit函数，线程会显式的终止<br>3.某个对等线程调用Linux的exit函数<br>4.pthread_cancel</p>
+<ul>
+<li>一个分离线程是不能被其他线程回收或插死的。它的内存在它终止时由系统自动释放。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/pictures/qrcode.jpg" alt="守望 wechat" style="width: 200px; max-width: 100%;">
+    <div>关注公众号[编程珠玑]获取更多原创技术文章</div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>出入相友，守望相助！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/wechatpay.jpg" alt="守望 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/alipay.jpg" alt="守望 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    守望
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.yanbinghu.com/2019/05/01/5629.html" title="《深入理解计算机系统》摘要">https://www.yanbinghu.com/2019/05/01/5629.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本文为原创文章，版权归<a href="https://www.yanbinghu.com">守望</a>所有，并采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请<a href="mailto:yanbinghu@yanbinghu.com">联系本人</a>！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+          
+            <a href="/tags/读书/" rel="tag"><i class="fa fa-tag"></i> 读书</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/25/38588.html" rel="next" title="Linux进程间通信方式">
+                <i class="fa fa-chevron-left"></i> Linux进程间通信方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/04/61373.html" rel="prev" title="什么是散列表（哈希表）">
+                什么是散列表（哈希表） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- Go to www.addthis.com/dashboard to customize your tools -->
+<div class="addthis_inline_share_toolbox">
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=2134076" async="async"></script>
+</div>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+ <div id="gitalk-container"></div>
+  
+
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="守望">
+            
+              <p class="site-author-name" itemprop="name">守望</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">180</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:yanbinghu@yanbinghu.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.yanbinghu.com/about/" target="_blank" title="公众号">
+                    
+                      <i class="fa fa-fw fa-globe"></i>公众号</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-globe"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.javazhiyin.com" title="Java知音" target="_blank">Java知音</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.strongerhuang.com" title="EmbeddedDevelop" target="_blank">EmbeddedDevelop</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+<div class="widget-wrap">
+    <h3 class="widget-title">目录</h3>
+	<div class="category-all-page">
+		<div class="category-all">
+		  <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C</a><span class="category-list-count">52</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cpp/">Cpp</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go/">Go</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shell/">Shell</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gdb/">gdb</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/leetcode/">leetcode</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><span class="category-list-count">41</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/resource/">resource</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/windows/">windows</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/单元测试/">单元测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工作面试/">工作面试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据结构与算法/">数据结构与算法</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/程序员/">程序员</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络编程/">网络编程</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/读书/">读书</a><span class="category-list-count">10</span></li></ul>
+		</div>
+	</div>
+</div>
+
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第一章计算机系统漫游"><span class="nav-number">2.</span> <span class="nav-text">第一章计算机系统漫游</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二章信息的表示处理"><span class="nav-number">3.</span> <span class="nav-text">第二章信息的表示处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三章-程序的机器级表示"><span class="nav-number">4.</span> <span class="nav-text">第三章 程序的机器级表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第5章"><span class="nav-number">5.</span> <span class="nav-text">第5章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六章"><span class="nav-number">6.</span> <span class="nav-text">第六章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第七章"><span class="nav-number">7.</span> <span class="nav-text">第七章</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-重定位"><span class="nav-number">7.0.1.</span> <span class="nav-text">3.3 重定位</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#第八章异常控制流"><span class="nav-number">8.</span> <span class="nav-text">第八章异常控制流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第九章-虚拟内存"><span class="nav-number">9.</span> <span class="nav-text">第九章 虚拟内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十章-系统级IO"><span class="nav-number">10.</span> <span class="nav-text">第十章 系统级IO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十二章-并发编程"><span class="nav-number">11.</span> <span class="nav-text">第十二章 并发编程</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">守望</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+<div>
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1277113960'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s5.cnzz.com/z_stat.php%3Fid%3D1277113960%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/gitalk/gitalk.css">
+  
+  <script src="/lib/gitalk/gitalk.min.js"></script>
+   <script type="text/javascript">
+		var gitalk = new Gitalk({
+		  clientID: 'ede3b4c45efafd567659',
+		  clientSecret: 'a1b520b96a030165bd3bde65c37121e82e3509b3',
+		  repo: 'BlogComments',
+		  owner: 'yanbinghu',
+		  admin: ['yanbinghu'], 
+		  id: location.pathname,
+		  distractionFreeMode: 'true'
+		})
+		gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("3QkijkMW8MUrMYO01qifxcDz-gzGzoHsz", "M3hmJ4JUXBhFXYgvyExsbFTP");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.3"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.3"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+</body>
+</html>

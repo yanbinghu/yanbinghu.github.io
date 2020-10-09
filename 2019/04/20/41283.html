@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="gdb,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="守望的个人博客" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="总览本文为GDB调试指南，参考GDB调试手册，但加入了很多实例，目前已有的篇目：  启动调试 断点设置 变量查看 单步调试 源码查看">
+<meta name="keywords" content="gdb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GDB调试指南">
+<meta property="og:url" content="https://www.yanbinghu.com/2019/04/20/41283.html">
+<meta property="og:site_name" content="守望的个人博客">
+<meta property="og:description" content="总览本文为GDB调试指南，参考GDB调试手册，但加入了很多实例，目前已有的篇目：  启动调试 断点设置 变量查看 单步调试 源码查看">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/yanbinghu/BlogImages/raw/master/articles/GDB%E8%B0%83%E8%AF%95%E6%8C%87%E5%8D%97-%E6%BA%90%E7%A0%81%E6%9F%A5%E7%9C%8B/gdb-tui.png">
+<meta property="og:updated_time" content="2020-10-05T04:01:06.752Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GDB调试指南">
+<meta name="twitter:description" content="总览本文为GDB调试指南，参考GDB调试手册，但加入了很多实例，目前已有的篇目：  启动调试 断点设置 变量查看 单步调试 源码查看">
+<meta name="twitter:image" content="https://github.com/yanbinghu/BlogImages/raw/master/articles/GDB%E8%B0%83%E8%AF%95%E6%8C%87%E5%8D%97-%E6%BA%90%E7%A0%81%E6%9F%A5%E7%9C%8B/gdb-tui.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yanbinghu.com/2019/04/20/41283.html">
+
+
+
+
+
+  <title>GDB调试指南 | 守望的个人博客</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99619048-1', 'auto');
+  ga('send', 'pageview');
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+<link rel="stylesheet" href="/css/prism-atom-dark.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"><script src="/js/prism.js"></script>
+<script src="/js/prism-line-numbers.min.js"></script></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">守望的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">编程珠玑</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-linux">
+          <a href="/categories/linux" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Linux
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-c">
+          <a href="/categories/C" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            C
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-c++">
+          <a href="/categories/Cpp" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            C++
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-数据结构与算法">
+          <a href="/categories/数据结构与算法" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            数据结构与算法
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-书籍">
+          <a href="/books/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br>
+            
+            书籍
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gdb调试指南">
+          <a href="/2019/04/20/41283.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            GDB调试指南
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yanbinghu.com/2019/04/20/41283.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="守望">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="守望的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">GDB调试指南</h2>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-20T21:30:00+08:00">
+                2019-04-20
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-10-05T12:01:06+08:00">
+                2020-10-05
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/gdb/" itemprop="url" rel="index">
+                    <span itemprop="name">gdb</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/04/20/41283.html" class="leancloud_visitors" data-flag-title="GDB调试指南">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h1><p>本文为GDB调试指南，参考GDB调试手册，但加入了很多实例，目前已有的篇目：</p>
+<ul>
+<li><a href="#启动调试">启动调试</a></li>
+<li><a href="#断点设置">断点设置</a></li>
+<li><a href="#变量查看">变量查看</a></li>
+<li><a href="#单步调试">单步调试</a></li>
+<li><a href="#源码查看">源码查看</a><a id="more"></a>
+</li>
+</ul>
+<h1 id="启动调试"><a href="#启动调试" class="headerlink" title="启动调试"></a>启动调试</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>GDB（GNU Debugger）是UNIX及UNIX-like下的强大调试工具，可以调试ada, c, c++, asm, minimal, d, fortran, objective-c, go, java,pascal等语言。本文以C程序为例，介绍GDB启动调试的多种方式。<br><!--more--></p>
+<h2 id="哪类程序可被调试"><a href="#哪类程序可被调试" class="headerlink" title="哪类程序可被调试"></a>哪类程序可被调试</h2><p>对于C程序来说，需要在编译时加上-g参数，保留调试信息，否则不能使用GDB进行调试。<br>但如果不是自己编译的程序，并不知道是否带有-g参数，如何判断一个文件是否带有调试信息呢？</p>
+<h4 id="gdb-文件"><a href="#gdb-文件" class="headerlink" title="gdb 文件"></a>gdb 文件</h4><p>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gdb helloworld</span><br><span class="line">Reading symbols from helloWorld...(no debugging symbols found)...done.</span><br></pre></td></tr></table></figure></p>
+<p>如果没有调试信息，会提示no debugging symbols found。<br>如果是下面的提示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Reading symbols from helloWorld...done.</span><br></pre></td></tr></table></figure></p>
+<p>则可以进行调试。</p>
+<h4 id="readelf查看段信息"><a href="#readelf查看段信息" class="headerlink" title="readelf查看段信息"></a>readelf查看段信息</h4><p>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -S helloWorld|grep debug</span><br><span class="line">  [28] .debug_aranges    PROGBITS         0000000000000000  0000106d</span><br><span class="line">  [29] .debug_info       PROGBITS         0000000000000000  0000109d</span><br><span class="line">  [30] .debug_abbrev     PROGBITS         0000000000000000  0000115b</span><br><span class="line">  [31] .debug_line       PROGBITS         0000000000000000  000011b9</span><br><span class="line">  [32] .debug_str        PROGBITS         0000000000000000  000011fc</span><br></pre></td></tr></table></figure></p>
+<p>helloWorld为文件名，如果没有任何debug信息，则不能被调试。</p>
+<h4 id="file查看strip状况"><a href="#file查看strip状况" class="headerlink" title="file查看strip状况"></a>file查看strip状况</h4><p>下面的情况也是不可调试的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">file helloWorld</span><br><span class="line">helloWorld: (省略前面内容) stripped</span><br></pre></td></tr></table></figure></p>
+<p>如果最后是stripped，则说明该文件的符号表信息和调试信息已被去除，不能使用gdb调试。但是not stripped的情况并不能说明能够被调试。</p>
+<h2 id="调试方式运行程序"><a href="#调试方式运行程序" class="headerlink" title="调试方式运行程序"></a>调试方式运行程序</h2><p>程序还未启动时，可有多种方式启动调试。</p>
+<h4 id="调试启动无参程序"><a href="#调试启动无参程序" class="headerlink" title="调试启动无参程序"></a>调试启动无参程序</h4><p>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gdb helloWorld</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>输入run命令，即可运行程序</p>
+<h4 id="调试启动带参程序"><a href="#调试启动带参程序" class="headerlink" title="调试启动带参程序"></a>调试启动带参程序</h4><p>假设有以下程序，启动时需要带参数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="number">1</span> &gt;= argc)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"usage:hello name\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Hello World %s!\n"</span>,argv[<span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编译：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -g -o hello hello.c</span><br></pre></td></tr></table></figure></p>
+<p>这种情况如何启动调试呢？需要设置参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ gdb hello</span><br><span class="line">(gdb)run 编程珠玑</span><br><span class="line">Starting program: /home/shouwang/workspaces/c/hello 编程珠玑</span><br><span class="line">Hello World 编程珠玑!</span><br><span class="line">[Inferior 1 (process 20084) exited normally]</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>只需要run的时候带上参数即可。<br>或者使用set args，然后在用run启动：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gdb hello</span><br><span class="line">(gdb) set args 编程珠玑</span><br><span class="line">(gdb) run</span><br><span class="line">Starting program: /home/hyb/workspaces/c/hello 编程珠玑</span><br><span class="line">Hello World 编程珠玑!</span><br><span class="line">[Inferior 1 (process 20201) exited normally]</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<h4 id="调试core文件"><a href="#调试core文件" class="headerlink" title="调试core文件"></a>调试core文件</h4><p>当程序core dump时，可能会产生core文件，它能够很大程序帮助我们定位问题。但前提是系统没有限制core文件的产生。可以使用命令limit -c查看：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ulimit -c</span><br><span class="line">0</span><br></pre></td></tr></table></figure></p>
+<p>如果结果是0，那么恭喜你，即便程序core dump了也不会有core文件留下。我们需要让core文件能够产生：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ulimit -c unlimied  #表示不限制core文件大小</span><br><span class="line">ulimit -c 10        #设置最大大小，单位为块，一块默认为512字节</span><br></pre></td></tr></table></figure></p>
+<p>上面两种方式可选其一。第一种无限制，第二种指定最大产生的大小。<br>调试core文件也很简单：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb 程序文件名 core文件名</span><br></pre></td></tr></table></figure></p>
+<p>具体可参看《<a href="https://www.yanbinghu.com/2018/09/26/61877.html">linux常用命令-开发调试篇</a>》gdb部分。</p>
+<h2 id="调试已运行程序"><a href="#调试已运行程序" class="headerlink" title="调试已运行程序"></a>调试已运行程序</h2><p>如果程序已经运行了怎么办呢？<br>首先使用ps命令找到进程id：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef|grep 进程名</span><br></pre></td></tr></table></figure></p>
+<h4 id="attach方式"><a href="#attach方式" class="headerlink" title="attach方式"></a>attach方式</h4><p>假设获取到进程id为20829，则可用下面的方式调试进程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gdb</span><br><span class="line">(gdb) attach 20829</span><br></pre></td></tr></table></figure></p>
+<p>接下来就可以继续你的调试啦。</p>
+<p>可能会有下面的错误提示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Could not attach to process.  If your uid matches the uid of the target</span><br><span class="line">process, check the setting of /proc/sys/kernel/yama/ptrace_scope, or try</span><br><span class="line">again as the root user.  For more details, see /etc/sysctl.d/10-ptrace.conf</span><br><span class="line">ptrace: Operation not permitted.</span><br></pre></td></tr></table></figure></p>
+<p>解决方法，切换到root用户：<br>将/etc/sysctl.d/10-ptrace.conf中的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kernel.yama.ptrace_scope = 1</span><br></pre></td></tr></table></figure></p>
+<p>修改为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kernel.yama.ptrace_scope = 0</span><br></pre></td></tr></table></figure></p>
+<h4 id="直接调试相关id进程"><a href="#直接调试相关id进程" class="headerlink" title="直接调试相关id进程"></a>直接调试相关id进程</h4><p>还可以是用这样的方式gdb program pid，例如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb hello 20829</span><br></pre></td></tr></table></figure></p>
+<p>或者：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb hello --pid 20829</span><br></pre></td></tr></table></figure></p>
+<h4 id="已运行程序没有调试信息"><a href="#已运行程序没有调试信息" class="headerlink" title="已运行程序没有调试信息"></a>已运行程序没有调试信息</h4><p>为了节省磁盘空间，已经运行的程序通常没有调试信息。但如果又不能停止当前程序重新启动调试，那怎么办呢？还有办法，那就是同样的代码，再编译出一个带调试信息的版本。然后使用和前面提到的方式操作。对于attach方式，在attach之前，使用file命令即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ gdb</span><br><span class="line">(gdb) file hello</span><br><span class="line">Reading symbols from hello...done.</span><br><span class="line">(gdb)attach 20829</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要介绍了两种类型的GDB启动调试方式，分别是调试未运行的程序和已经运行的程序。对于什么样的程序能够进行调试也进行了简单说明。</p>
+<h1 id="断点设置"><a href="#断点设置" class="headerlink" title="断点设置"></a>断点设置</h1><h2 id="前言-1"><a href="#前言-1" class="headerlink" title="前言"></a>前言</h2><p>上篇《<a href="https://www.yanbinghu.com/2019/01/08/62137.html">GDB调试指南-启动调试</a>》我们讲到了GDB启动调试的多种方式，分别应用于多种场景。今天我们来介绍一下断点设置的多种方式。<br><!--more--></p>
+<h2 id="为何要设置断点"><a href="#为何要设置断点" class="headerlink" title="为何要设置断点"></a>为何要设置断点</h2><p>在介绍之前，我们首先需要了解，为什么需要设置断点。我们在指定位置设置断点之后，程序运行到该位置将会“暂停”，这个时候我们就可以对程序进行更多的操作，比如查看变量内容，堆栈情况等等，以帮助我们调试程序。</p>
+<h2 id="查看已设置的断点"><a href="#查看已设置的断点" class="headerlink" title="查看已设置的断点"></a>查看已设置的断点</h2><p>在学习断点设置之前，我们可以使用info breakpoints查看已设置断点：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">info breakpoints</span><br><span class="line">Num     Type           Disp Enb Address            What</span><br><span class="line">1       breakpoint     keep y   0x00000000004005fc in printNum2 at test.c:17</span><br><span class="line">    breakpoint already hit 1 time</span><br><span class="line">2       hw watchpoint  keep y                      a</span><br><span class="line">    breakpoint already hit 1 time</span><br><span class="line">    ignore next 3 hits</span><br></pre></td></tr></table></figure></p>
+<p>它将会列出所有已设置的断点，每一个断点都有一个标号，用来代表这个断点。例如，第2个断点设置是一个观察点，并且会忽略三次。</p>
+<h2 id="断点设置-1"><a href="#断点设置-1" class="headerlink" title="断点设置"></a>断点设置</h2><p>断点设置有多种方式，分别应用于不同的场景。借助示例程序进行一一介绍：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//test.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printNum</span><span class="params">(<span class="keyword">int</span> a)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"printNum\n"</span>);</span><br><span class="line">    <span class="keyword">while</span>(a &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,a);</span><br><span class="line">        a--;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printNum2</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"printNum\n"</span>);</span><br><span class="line">    <span class="keyword">while</span>(a &gt; num &amp;&amp; a&gt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,a);</span><br><span class="line">        a--;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">div</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"a=%d,b=%d\n"</span>,a,b);</span><br><span class="line">    <span class="keyword">int</span> temp = a/b;</span><br><span class="line">    <span class="keyword">return</span> temp;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    printNum2(<span class="number">12</span>,<span class="number">5</span>);</span><br><span class="line">    printNum(<span class="number">10</span>);</span><br><span class="line">    div(<span class="number">10</span>,<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编译：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -g -o test test.c</span><br></pre></td></tr></table></figure></p>
+<p>注意，编译时需要带上-g参数，具体原因参见《<a href="https://www.yanbinghu.com/2019/01/08/62137.html">GDB调试指南-启动调试</a>》。</p>
+<h4 id="根据行号设置断点"><a href="#根据行号设置断点" class="headerlink" title="根据行号设置断点"></a>根据行号设置断点</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b 9  #break 可简写为b</span><br></pre></td></tr></table></figure>
+<p>或者<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b test.c:9</span><br></pre></td></tr></table></figure></p>
+<p>程序运行到第9行的时候会断住。</p>
+<h4 id="根据函数名设置断点"><a href="#根据函数名设置断点" class="headerlink" title="根据函数名设置断点"></a>根据函数名设置断点</h4><p>同样可以将断点设置在函数处：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b printNum</span><br></pre></td></tr></table></figure></p>
+<p>程序在调用到printNum函数的时候会断住。</p>
+<h4 id="根据条件设置断点"><a href="#根据条件设置断点" class="headerlink" title="根据条件设置断点"></a>根据条件设置断点</h4><p>假设程序某处发生崩溃，而崩溃的原因怀疑是某个地方出现了非期望的值，那么你就可以在这里断点观察，当出现该非法值时，程序断住。这个时候我们可以借助gdb来设置条件断点，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">break test.c:23 if b==0</span><br></pre></td></tr></table></figure></p>
+<p>当在b等于0时，程序将会在第23行断住。<br>它和condition有着类似的作用，假设上面的断点号为1，那么：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">condition 1 b==0</span><br></pre></td></tr></table></figure></p>
+<p>会使得b等于0时，产生断点1。而实际上可以很方便地用来改变断点产生的条件，例如，之前设置b==0时产生该断点，那么使用condition可以修改断点产生的条件。</p>
+<h4 id="根据规则设置断点"><a href="#根据规则设置断点" class="headerlink" title="根据规则设置断点"></a>根据规则设置断点</h4><p>例如需要对所有调用printNum函数都设置断点，可以使用下面的方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rbreak printNum*</span><br></pre></td></tr></table></figure></p>
+<p>所有以printNum开头的函数都设置了断点。而下面是对所有函数设置断点：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#用法：rbreak file:regex</span><br><span class="line">rbreak . </span><br><span class="line">rbreak test.c:. #对test.c中的所有函数设置断点</span><br><span class="line">rbreak test.c:^print #对以print开头的函数设置断点</span><br></pre></td></tr></table></figure></p>
+<h4 id="设置临时断点"><a href="#设置临时断点" class="headerlink" title="设置临时断点"></a>设置临时断点</h4><p>假设某处的断点只想生效一次，那么可以设置临时断点，这样断点后面就不复存在了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tbreak test.c:l0  #在第10行设置临时断点</span><br></pre></td></tr></table></figure></p>
+<h4 id="跳过多次设置断点"><a href="#跳过多次设置断点" class="headerlink" title="跳过多次设置断点"></a>跳过多次设置断点</h4><p>假如有某个地方，我们知道可能出错，但是前面30次都没有问题，虽然在该处设置了断点，但是想跳过前面30次，可以使用下面的方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ignore 1 30</span><br></pre></td></tr></table></figure></p>
+<p>其中，1是你要忽略的断点号，可以通过前面的方式查找到，30是需要跳过的次数。这样设置之后，会跳过前面30次。再次通过info breakpoints可以看到：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Num     Type           Disp Enb Address            What</span><br><span class="line">1       breakpoint     keep y   0x00000000004005e8 in printNum2 at test.c:16</span><br><span class="line">    ignore next 30 hits</span><br></pre></td></tr></table></figure></p>
+<h4 id="根据表达式值变化产生断点"><a href="#根据表达式值变化产生断点" class="headerlink" title="根据表达式值变化产生断点"></a>根据表达式值变化产生断点</h4><p>有时候我们需要观察某个值或表达式，知道它什么时候发生变化了，这个时候我们可以借助watch命令。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">watch a</span><br></pre></td></tr></table></figure></p>
+<p>这个时候，让程序继续运行，如果a的值发生变化，则会打印相关内容，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Hardware watchpoint 2: a</span><br><span class="line">Old value = 12</span><br><span class="line">New value = 11</span><br></pre></td></tr></table></figure></p>
+<p>但是这里要特别注意的是，程序必须运行起来，否则会出现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">No symbol &quot;a&quot; in current context.</span><br></pre></td></tr></table></figure></p>
+<p>因为程序没有运行，当前上下文也就没有相关变量信息。</p>
+<p>rwatch和awatch同样可以设置观察点前者是当变量值被读时断住，后者是被读或者被改写时断住。</p>
+<h2 id="禁用或启动断点"><a href="#禁用或启动断点" class="headerlink" title="禁用或启动断点"></a>禁用或启动断点</h2><p>有些断点暂时不想使用，但又不想删除，可以暂时禁用或启用。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">disable  #禁用所有断点</span><br><span class="line">disable bnum #禁用标号为bnum的断点</span><br><span class="line">enable  #启用所有断点</span><br><span class="line">enable bnum #启用标号为bnum的断点</span><br><span class="line">enable delete bnum  #启动标号为bnum的断点，并且在此之后删除该断点</span><br></pre></td></tr></table></figure></p>
+<h2 id="断点清除"><a href="#断点清除" class="headerlink" title="断点清除"></a>断点清除</h2><p>断点清除主要用到clear和delete命令。常见使用如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">clear   #删除当前行所有breakpoints</span><br><span class="line">clear function  #删除函数名为function处的断点</span><br><span class="line">clear filename:function #删除文件filename中函数function处的断点</span><br><span class="line">clear lineNum #删除行号为lineNum处的断点</span><br><span class="line">clear f:lename：lineNum #删除文件filename中行号为lineNum处的断点</span><br><span class="line">delete  #删除所有breakpoints,watchpoints和catchpoints</span><br><span class="line">delete bnum #删除断点号为bnum的断点</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了常见的断点设置方法，断点设置之后，可以便于我们后期观察变量，堆栈等信息，为进一步的定位与调试做准备。</p>
+<h1 id="变量查看"><a href="#变量查看" class="headerlink" title="变量查看"></a>变量查看</h1><h2 id="前言-2"><a href="#前言-2" class="headerlink" title="前言"></a>前言</h2><p>在启动调试以及设置断点之后，就到了我们非常关键的一步-查看变量。GDB调试最大的目的之一就是走查代码，查看运行结果是否符合预期。既然如此，我们就不得不了解一些查看各种类型变量的方法，以帮助我们进一步定位问题。<br><!--more--></p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>在查看变量之前，需要先启动调试并设置断点，该部分内容可参考《<a href="https://www.yanbinghu.com/2019/01/08/62137.html">GDB调试指南－启动调试</a>》和《<a href="https://www.yanbinghu.com/2019/02/24/44483.html">GDB调试指南－断点设置</a>》。后面的内容都基于在某个位置已经断住。</p>
+<p>本文辅助说明程序如下:<br>testGdb.c<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//testGdb.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">"testGdb.h"</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">10</span>; <span class="comment">//整型</span></span><br><span class="line">    <span class="keyword">int</span> b[] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>&#125;;  <span class="comment">//数组</span></span><br><span class="line">    <span class="keyword">char</span> c[] = <span class="string">"hello,shouwang"</span>;<span class="comment">//字符数组</span></span><br><span class="line">    <span class="comment">/*申请内存，失败时退出*/</span>    </span><br><span class="line">    <span class="keyword">int</span> *d = (<span class="keyword">int</span>*)<span class="built_in">malloc</span>(a*<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">    <span class="keyword">if</span>(<span class="literal">NULL</span> == d)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"malloc error\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*赋值*/</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; <span class="number">10</span>;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        d[i] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(d);</span><br><span class="line">    d = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">float</span> e = <span class="number">8.5f</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>testGdb.h<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">11</span>;</span><br></pre></td></tr></table></figure></p>
+<p>编译：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -g -o testGdb testGdb.o</span><br></pre></td></tr></table></figure></p>
+<h2 id="普通变量查看"><a href="#普通变量查看" class="headerlink" title="普通变量查看"></a>普通变量查看</h2><h4 id="打印基本类型变量，数组，字符数组"><a href="#打印基本类型变量，数组，字符数组" class="headerlink" title="打印基本类型变量，数组，字符数组"></a>打印基本类型变量，数组，字符数组</h4><p>最常见的使用便是使用print（可简写为p）打印变量内容。<br>例如，打印基本类型，数组，字符数组等直接使用p 变量名即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">(gdb) p a</span><br><span class="line">$1 = 10</span><br><span class="line">(gdb) p b</span><br><span class="line">$2 = &#123;1, 2, 3, 5&#125;</span><br><span class="line">(gdb) p c</span><br><span class="line">$3 = &quot;hello,shouwang&quot;</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>当然有时候，多个函数或者多个文件会有同一个变量名，这个时候可以在前面加上函数名或者文件名来区分：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p &apos;testGdb.h&apos;::a</span><br><span class="line">$1 = 11</span><br><span class="line">(gdb) p &apos;main&apos;::b</span><br><span class="line">$2 = &#123;1, 2, 3, 5&#125;</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>这里所打印的a值是我们定义在testGdb.h文件里的，而b值是main函数中的b。</p>
+<h4 id="打印指针指向内容"><a href="#打印指针指向内容" class="headerlink" title="打印指针指向内容"></a>打印指针指向内容</h4><p>如果还是使用上面的方式打印指针指向的内容，那么打印出来的只是指针地址而已，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p d</span><br><span class="line">$1 = (int *) 0x602010</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>而如果想要打印指针指向的内容，需要解引用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p *d</span><br><span class="line">$2 = 0</span><br><span class="line">(gdb) p *d@10</span><br><span class="line">$3 = &#123;0, 1, 2, 3, 4, 5, 6, 7, 8, 9&#125;</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>从上面可以看到，仅仅使用*只能打印第一个值，如果要打印多个值，后面跟上@并加上要打印的长度。<br>或者@后面跟上变量值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p *d@a</span><br><span class="line">$2 = &#123;0, 1, 2, 3, 4, 5, 6, 7, 8, 9&#125;</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>由于a的值为10，并且是作为整型指针数据长度，因此后面可以直接跟着a，也可以打印出所有内容。</p>
+<p>另外值得一提的是，$可表示上一个变量，而假设此时有一个链表linkNode，它有next成员代表下一个节点，则可使用下面方式不断打印链表内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p *linkNode</span><br><span class="line">(这里显示linkNode节点内容)</span><br><span class="line">(gdb) p *$.next</span><br><span class="line">(这里显示linkNode节点下一个节点的内容)</span><br></pre></td></tr></table></figure></p>
+<p>如果想要查看前面数组的内容，你可以将下标一个一个累加，还可以定义一个类似UNIX环境变量，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(gdb) set $index=0</span><br><span class="line">(gdb) p b[$index++]</span><br><span class="line">$11 = 1</span><br><span class="line">(gdb) p b[$index++]</span><br><span class="line">$12 = 2</span><br><span class="line">(gdb) p b[$index++]</span><br><span class="line">$13 = 3</span><br></pre></td></tr></table></figure></p>
+<p>这样就不需要每次修改下标去打印啦。</p>
+<h2 id="按照特定格式打印变量"><a href="#按照特定格式打印变量" class="headerlink" title="按照特定格式打印变量"></a>按照特定格式打印变量</h2><p>对于简单的数据，print默认的打印方式已经足够了，它会根据变量类型的格式打印出来，但是有时候这还不够，我们需要更多的格式控制。常见格式控制字符如下：</p>
+<ul>
+<li>x 按十六进制格式显示变量。</li>
+<li>d 按十进制格式显示变量。</li>
+<li>u 按十六进制格式显示无符号整型。</li>
+<li>o 按八进制格式显示变量。</li>
+<li>t 按二进制格式显示变量。</li>
+<li>a 按十六进制格式显示变量。</li>
+<li>c 按字符格式显示变量。</li>
+<li>f 按浮点数格式显示变量。</li>
+</ul>
+<p>还是以辅助程序来说明，正常方式打印字符数组c：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p c</span><br><span class="line">$18 = &quot;hello,shouwang&quot;</span><br></pre></td></tr></table></figure></p>
+<p>但是如果我们要查看它的十六进制格式打印呢？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p/x c</span><br><span class="line">$19 = &#123;0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x2c, 0x73, 0x68, 0x6f, 0x75, 0x77, 0x61, </span><br><span class="line">  0x6e, 0x67, 0x0&#125;</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>但是如果我们想用这种方式查看浮点数的二进制格式是怎样的是不行的，因为直接打印它首先会被转换成整型，因此最终会得到8：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p e</span><br><span class="line">$1 = 8.5</span><br><span class="line">(gdb) p/t e</span><br><span class="line">$2 = 1000</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>那么就需要另外一种查看方式了。</p>
+<h2 id="查看内存内容"><a href="#查看内存内容" class="headerlink" title="查看内存内容"></a>查看内存内容</h2><p>examine(简写为x)可以用来查看内存地址中的值。语法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x/[n][f][u] addr</span><br></pre></td></tr></table></figure></p>
+<p>其中：</p>
+<ul>
+<li>n 表示要显示的内存单元数，默认值为1</li>
+<li>f 表示要打印的格式，前面已经提到了格式控制字符</li>
+<li>u 要打印的单元长度</li>
+<li>addr 内存地址</li>
+</ul>
+<p>单元类型常见有如下：</p>
+<ul>
+<li>b 字节</li>
+<li>h 半字，即双字节</li>
+<li>w 字，即四字节</li>
+<li>g 八字节</li>
+</ul>
+<p>我们通过一个实例来看，假如我们要把float变量e按照二进制方式打印，并且打印单位是一字节：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/4tb &amp;e</span><br><span class="line">0x7fffffffdbd4:    00000000    00000000    00001000    01000001</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，变量e的四个字节都以二进制的方式打印出来了。</p>
+<h2 id="自动显示变量内容"><a href="#自动显示变量内容" class="headerlink" title="自动显示变量内容"></a>自动显示变量内容</h2><p>假设我们希望程序断住时，就显示某个变量的值，可以使用display命令。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) display e</span><br><span class="line">1: e = 8.5</span><br></pre></td></tr></table></figure></p>
+<p>那么每次程序断住时，就会打印e的值。要查看哪些变量被设置了display，可以使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb)into display</span><br><span class="line">Auto-display expressions now in effect:</span><br><span class="line">Num Enb Expression</span><br><span class="line">1:   y  b</span><br><span class="line">2:   y  e</span><br></pre></td></tr></table></figure></p>
+<p>如果想要清除可以使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete display num #num为前面变量前的编号,不带num时清除所有。</span><br></pre></td></tr></table></figure></p>
+<p>或者去使能：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">disable display num  #num为前面变量前的编号，不带num时去使能所有</span><br></pre></td></tr></table></figure></p>
+<h2 id="查看寄存器内容"><a href="#查看寄存器内容" class="headerlink" title="查看寄存器内容"></a>查看寄存器内容</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(gdb)info registers</span><br><span class="line">rax            0x0    0</span><br><span class="line">rbx            0x0    0</span><br><span class="line">rcx            0x7ffff7dd1b00    140737351850752</span><br><span class="line">rdx            0x0    0</span><br><span class="line">rsi            0x7ffff7dd1b30    140737351850800</span><br><span class="line">rdi            0xffffffff    4294967295</span><br><span class="line">rbp            0x7fffffffdc10    0x7fffffffdc10</span><br><span class="line">(内容过多未显示完全)</span><br></pre></td></tr></table></figure>
+<h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><p>通过不同方式查看变量值或者内存值能够极大的帮助我们判断程序的运行是否符合我们的预期，如果发现观察的值不是我们预期的时候，就需要检查我们的代码了。</p>
+<h1 id="单步调试"><a href="#单步调试" class="headerlink" title="单步调试"></a>单步调试</h1><h2 id="前言-3"><a href="#前言-3" class="headerlink" title="前言"></a>前言</h2><p>前面通过《<a href="https://www.yanbinghu.com/2019/01/08/62137.html">启动调试</a>》，《<a href="https://www.yanbinghu.com/2019/02/24/44483.html">断点设置</a>》，《<a href="https://www.yanbinghu.com/2019/03/10/50132.html">变量查看</a>》,我们已经了解了GDB基本的启动，设置断点，查看变量等，如果这些内容你还不知道，建议先回顾一下前面的内容。在启动调试设置断点观察之后，没有我们想要的信息怎么办呢？这个时候，就需要单步执行或者跳过当前断点继续执行等等。而本文所说的单步调试并非仅仅指单步执行，而是指在你的控制之下，按要求执行语句。<br><!--more--></p>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>老规矩，先准备一个示例程序如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*gdbStep.c*/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="comment">/*计算简单乘法,这里没有考虑溢出*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> c = a + b;</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*打印从0到num-1的数*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">count</span><span class="params">(<span class="keyword">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>(<span class="number">0</span> &gt; num)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(i &lt; num)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,i);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">int</span> b = <span class="number">7</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"it will calc a + b\n"</span>);</span><br><span class="line">    <span class="keyword">int</span> c = add(a,b);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d + %d = %d\n"</span>,a,b,c);</span><br><span class="line">    count(c);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编译：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -g -o gdbStep gdbStep.c</span><br></pre></td></tr></table></figure></p>
+<p>程序的功能比较简单，这里不多做解释。</p>
+<p>特别简单说明一条命令，list（可简写为l），它可以将源码列出来，例如：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">(gdb) <span class="built_in">list</span></span><br><span class="line"><span class="number">1</span>    <span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="number">2</span>    </span><br><span class="line"><span class="number">3</span>    <span class="comment">/*计算简单乘法,这里没有考虑溢出*/</span></span><br><span class="line"><span class="number">4</span>    <span class="function"><span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function">5    </span>&#123;</span><br><span class="line"><span class="number">6</span>        <span class="keyword">int</span> c = a * b;</span><br><span class="line"><span class="number">7</span>        <span class="keyword">return</span> c;</span><br><span class="line"><span class="number">8</span>    &#125;</span><br><span class="line"><span class="number">9</span>    <span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function">10    </span>&#123;</span><br><span class="line">(gdb) l</span><br><span class="line"><span class="number">11</span>        <span class="keyword">int</span> a = <span class="number">13</span>;</span><br><span class="line"><span class="number">12</span>        <span class="keyword">int</span> b = <span class="number">57</span>;</span><br><span class="line"><span class="number">13</span>        <span class="built_in">printf</span>(<span class="string">"it will calc a * b\n"</span>);</span><br><span class="line"><span class="number">14</span>        <span class="keyword">int</span> c = add(a,b);</span><br><span class="line"><span class="number">15</span>        <span class="built_in">printf</span>(<span class="string">"%d*%d = %d\n"</span>,a,b,c);</span><br><span class="line"><span class="number">16</span>        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"><span class="number">17</span>    &#125;</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<h2 id="单步执行-next"><a href="#单步执行-next" class="headerlink" title="单步执行-next"></a>单步执行-next</h2><p>next命令（可简写为n）用于在程序断住后，继续执行下一条语句，假设已经启动调试，并在第12行停住，如果要继续执行，则使用n执行下一条语句，如果后面跟上数字num，则表示执行该命令num次，就达到继续执行n行的效果了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ gdb gdbStep   #启动调试</span><br><span class="line">(gdb)b 25       #将断点设置在12行</span><br><span class="line">(gdb)run        #运行程序</span><br><span class="line">Breakpoint 1, main () at gdbStep.c:25</span><br><span class="line">25        int b = 7;</span><br><span class="line">(gdb) n     #单步执行</span><br><span class="line">26        printf(&quot;it will calc a + b\n&quot;);</span><br><span class="line">(gdb) n 2   #执行两次</span><br><span class="line">it will calc a + b</span><br><span class="line">28        printf(&quot;%d + %d = %d\n&quot;,a,b,c);</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>从上面的执行结果可以看到，我们在25行处断住，执行n之后，运行到26行，运行n 2之后，运行到28行，但是有没有发现一个问题，为什么不会进入到add函数内部呢？那就需要用到另外一个命令啦。</p>
+<h2 id="单步进入-step"><a href="#单步进入-step" class="headerlink" title="单步进入-step"></a>单步进入-step</h2><p>对于上面的情况，如果我们想跟踪add函数内部的情况，可以使用step命令（可简写为s），它可以单步跟踪到函数内部，但前提是该函数有调试信息并且有源码信息。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ gdb gdbStep    #启动调试</span><br><span class="line">(gdb) b 25       #在12行设置断点</span><br><span class="line">Breakpoint 1 at 0x4005d3: file gdbStep.c, line 25.</span><br><span class="line">(gdb) run        #运行程序</span><br><span class="line">Breakpoint 1, main () at gdbStep.c:25</span><br><span class="line">25        int b = 7;</span><br><span class="line">(gdb) s          </span><br><span class="line">26        printf(&quot;it will calc a + b\n&quot;);</span><br><span class="line">(gdb) s     #单步进入，但是并没有该函数的源文件信息</span><br><span class="line">_IO_puts (str=0x4006b8 &quot;it will calc a + b&quot;) at ioputs.c:33</span><br><span class="line">33    ioputs.c: No such file or directory.</span><br><span class="line">(gdb) finish    #继续完成该函数调用</span><br><span class="line">Run till exit from #0  _IO_puts (str=0x4006b8 &quot;it will calc a + b&quot;)</span><br><span class="line">    at ioputs.c:33</span><br><span class="line">it will calc a + b</span><br><span class="line">main () at gdbStep.c:27</span><br><span class="line">27        int c = add(a,b);</span><br><span class="line">Value returned is $1 = 19</span><br><span class="line">(gdb) s        #单步进入，现在已经进入到了add函数内部</span><br><span class="line">add (a=13, b=57) at gdbStep.c:6</span><br><span class="line">6        int c = a + b;</span><br></pre></td></tr></table></figure></p>
+<p>从上面的过程可以看到，s命令会尝试进入函数，但是如果没有该函数源码，需要跳过该函数执行，可使用finish命令，继续后面的执行。如果没有函数调用，s的作用与n的作用并无差别，仅仅是继续执行下一行。它后面也可以跟数字，表明要执行的次数。</p>
+<p>当然它还有一个选项，用来设置当遇到没有调试信息的函数，s命令是否跳过该函数，而执行后面的。默认情况下，它是会跳过的，即step-mode值是off：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) show step-mode </span><br><span class="line">Mode of the step operation is off.</span><br><span class="line">(gdb) set step-mode on</span><br><span class="line">(gdb) set step-mode off</span><br></pre></td></tr></table></figure></p>
+<p>还有一个与step相关的命令是stepi（可简写为si），它与step不同的是，每次执行一条机器指令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(gdb) si</span><br><span class="line">0x0000000000400573    6        int c = a + b;</span><br><span class="line">(gdb) display/i $pc</span><br><span class="line">1: x/i $pc</span><br><span class="line">=&gt; 0x400573 &lt;add+13&gt;:    mov    -0x18(%rbp),%eax</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<h2 id="继续执行到下一个断点-continue"><a href="#继续执行到下一个断点-continue" class="headerlink" title="继续执行到下一个断点-continue"></a>继续执行到下一个断点-continue</h2><p>我们可能打了多处断点，或者断点打在循环内，这个时候，想跳过这个断点，甚至跳过多次断点继续执行该怎么做呢？可以使用continue命令（可简写为c）或者fg，它会继续执行程序，直到再次遇到断点处：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">$ gdb gdbStep</span><br><span class="line">(gdb)b 18    #在count函数循环内打断点</span><br><span class="line">(gdb)run</span><br><span class="line">Breakpoint 1, count (num=10) at gdbStep.c:18</span><br><span class="line">18            i++;</span><br><span class="line">(gdb) c      #继续运行，直到下一次断住</span><br><span class="line">Continuing.</span><br><span class="line">1</span><br><span class="line"></span><br><span class="line">Breakpoint 1, count (num=10) at gdbStep.c:18</span><br><span class="line">18            i++;</span><br><span class="line">(gdb) fg     #继续运行，直到下一次断住</span><br><span class="line">Continuing.</span><br><span class="line">2</span><br><span class="line"></span><br><span class="line">Breakpoint 1, count (num=10) at gdbStep.c:18</span><br><span class="line">18            i++;</span><br><span class="line">(gdb) c 3    #跳过三次</span><br><span class="line">Will ignore next 2 crossings of breakpoint 1.  Continuing.</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line"></span><br><span class="line">Breakpoint 1, count (num=10) at gdbStep.c:18</span><br><span class="line">18            i++;</span><br></pre></td></tr></table></figure></p>
+<h2 id="继续运行到指定位置-until"><a href="#继续运行到指定位置-until" class="headerlink" title="继续运行到指定位置-until"></a>继续运行到指定位置-until</h2><p>假如我们在25行停住了，现在想要运行到29行停住，就可以使用until命令（可简写为u）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ gdb gdbStep</span><br><span class="line">(gdb)b 25</span><br><span class="line">(gdb)run</span><br><span class="line">(gdb) u 29</span><br><span class="line">it will calc a + b</span><br><span class="line">3 + 7 = 10</span><br><span class="line">main () at gdbStep.c:29</span><br><span class="line">29        count(c);</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，在执行u 29之后，它在29行停住了。它利用的是临时断点。</p>
+<h2 id="跳过执行—skip"><a href="#跳过执行—skip" class="headerlink" title="跳过执行—skip"></a>跳过执行—skip</h2><p>skip可以在step时跳过一些不想关注的函数或者某个文件的代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ gdb gdbStep</span><br><span class="line">(gdb) b 27</span><br><span class="line">Breakpoint 1 at 0x4005e4: file gdbStep.c, line 27.</span><br><span class="line">(gdb) skip function add    #step时跳过add函数</span><br><span class="line">Function add will be skipped when stepping.</span><br><span class="line">(gdb) info skip   #查看step情况</span><br><span class="line">Num     Type           Enb What</span><br><span class="line">1       function       y   add</span><br><span class="line">(gdb) run</span><br><span class="line">Starting program: /home/hyb/workspaces/gdb/gdbStep </span><br><span class="line">it will calc a + b</span><br><span class="line"></span><br><span class="line">Breakpoint 1, main () at gdbStep.c:27</span><br><span class="line">27        int c = add(a,b);</span><br><span class="line">(gdb) s</span><br><span class="line">28        printf(&quot;%d + %d = %d\n&quot;,a,b,c);</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，再使用skip之后，使用step将不会进入add函数。<br>step也后面也可以跟文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(gdb)skip file gdbStep.c</span><br></pre></td></tr></table></figure></p>
+<p>这样gdbStep.c中的函数都不会进入。</p>
+<p>其他相关命令：</p>
+<ul>
+<li>skip delete [num] 删除skip</li>
+<li>skip enable [num] 使能skip</li>
+<li>skip disable [num] 去使能skip</li>
+</ul>
+<p>其中num是前面通过info skip看到的num值，上面可以带或不带该值，如果不带num，则针对所有skip，如果带上了，则只针对某一个skip。</p>
+<h2 id="总结-3"><a href="#总结-3" class="headerlink" title="总结"></a>总结</h2><p>本文主要介绍了一些简单情况的单步调试方法或常见命令使用，但这些已经够用了，毕竟大部分程序的执行或停止都在我们的掌控之中了。</p>
+<h1 id="源码查看"><a href="#源码查看" class="headerlink" title="源码查看"></a>源码查看</h1><h2 id="前言-4"><a href="#前言-4" class="headerlink" title="前言"></a>前言</h2><p>我们在调试过程中难免要对照源码进行查看，如果已经开始了调试，而查看源码或者编辑源码却要另外打开一个窗口，那未免显得太麻烦。文本将会介绍如何在GDB调试模式下<strong>查看源码或对源码进行编辑</strong>。<br><!--more--></p>
+<h2 id="准备工作-1"><a href="#准备工作-1" class="headerlink" title="准备工作"></a>准备工作</h2><p>为了说明后面的内容，我们先准备一些源码，分别是main.c：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">"test.h"</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"it will print from 5 to 1\n"</span>);</span><br><span class="line">    printNum(<span class="number">5</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"print end\n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"it will print 1 to 5\n"</span>);</span><br><span class="line">    printNum1(<span class="number">5</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"print end\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>头文件test.h：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _TEST_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _TEST_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printNum</span><span class="params">(<span class="keyword">int</span> n)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printNum1</span><span class="params">(<span class="keyword">int</span> n)</span></span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure></p>
+<p>以及test.c:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">"test.h"</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printNum</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>( n &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">while</span>(n &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,n);</span><br><span class="line">        n--;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printNum1</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>( n &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(i &lt;= n)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,i);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编译运行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -g  -o main  main.c test.c</span><br><span class="line">$ chmod +x main</span><br><span class="line">$ ./main</span><br><span class="line">it will print from 5 to 1</span><br><span class="line">5</span><br><span class="line">4</span><br><span class="line">3</span><br><span class="line">2</span><br><span class="line">1</span><br><span class="line">print end</span><br><span class="line">it will print 1 to 5</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">print end</span><br></pre></td></tr></table></figure></p>
+<p>程序功能比较简单，用来打印5到1的数以及1到5的数，这里也就不多做解释。</p>
+<h2 id="列出源码"><a href="#列出源码" class="headerlink" title="列出源码"></a>列出源码</h2><p>首先要介绍的就是list命令（可简写为l），它用来打印源码。</p>
+<h4 id="直接打印源码"><a href="#直接打印源码" class="headerlink" title="直接打印源码"></a>直接打印源码</h4><p>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ gdb main</span><br><span class="line">(gdb) l</span><br><span class="line">1    //main.c</span><br><span class="line">2    #include&lt;stdio.h&gt;</span><br><span class="line">3    #include&quot;test.h&quot;</span><br><span class="line">4    int main(void)</span><br><span class="line">5    &#123;</span><br><span class="line">6        printf(&quot;it will print from 5 to 1\n&quot;);</span><br><span class="line">7        printNum(5);</span><br><span class="line">8        printf(&quot;print end\n&quot;);</span><br><span class="line">9    </span><br><span class="line">10        printf(&quot;it will print 1 to 5\n&quot;);</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>直接输入l可从第一行开始显示源码，继续输入l，可列出后面的源码。后面也可以跟上+或者-，分别表示要列出上一次列出源码的后面部分或者前面部分。</p>
+<h4 id="列出指定行附近源码"><a href="#列出指定行附近源码" class="headerlink" title="列出指定行附近源码"></a>列出指定行附近源码</h4><p>l后面可以跟行号，表明要列出附近的源码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(gdb) l 9</span><br><span class="line">4    int main(void)</span><br><span class="line">5    &#123;</span><br><span class="line">6        printf(&quot;it will print from 5 to 1\n&quot;);</span><br><span class="line">7        printNum(5);</span><br><span class="line">8        printf(&quot;print end\n&quot;);</span><br><span class="line">9    </span><br><span class="line">10        printf(&quot;it will print 1 to 5\n&quot;);</span><br><span class="line">11        printNum1(5);</span><br><span class="line">12        printf(&quot;print end\n&quot;);</span><br><span class="line">13        return 0;</span><br></pre></td></tr></table></figure></p>
+<p>在这里，l后面跟上9，表明要列出第9行附近的源码。</p>
+<h4 id="列出指定函数附近的源码"><a href="#列出指定函数附近的源码" class="headerlink" title="列出指定函数附近的源码"></a>列出指定函数附近的源码</h4><p>这个很容易理解，而使用也很简单，l后面跟函数名即可，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(gdb) l printNum</span><br><span class="line">1    #include&quot;test.h&quot;</span><br><span class="line">2    void printNum(int n)</span><br><span class="line">3    &#123;</span><br><span class="line">4        if( n &lt; 0)</span><br><span class="line">5            return;</span><br><span class="line">6        while(n &gt; 0)</span><br><span class="line">7        &#123;</span><br><span class="line">8            printf(&quot;%d\n&quot;,n);</span><br><span class="line">9            n--;</span><br><span class="line">10        &#125;</span><br></pre></td></tr></table></figure></p>
+<p>在这里，l后面跟上函数名printNum，它便列出了printNum函数附近的源码。</p>
+<h4 id="设置源码一次列出行数"><a href="#设置源码一次列出行数" class="headerlink" title="设置源码一次列出行数"></a>设置源码一次列出行数</h4><p>不知道你有没有发现，在列出函数源码的时候，它并没有列全，因为l每次只显示10行，那么有没有方法每次列出更多呢？<br>我们可以通过listsize属性来设置，例如设置每次列出20行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) set listsize 20</span><br><span class="line">(gdb) show listsize</span><br><span class="line">Number of source lines gdb will list by default is 20.</span><br></pre></td></tr></table></figure></p>
+<p>这样每次就会列出20行，当然也可以设置为0或者unlimited，这样设置之后，列出就没有限制了，但源码如果较长，查看将会不便。</p>
+<h4 id="列出指定行之间的源码"><a href="#列出指定行之间的源码" class="headerlink" title="列出指定行之间的源码"></a>列出指定行之间的源码</h4><p>list first,last<br>例如，要列出3到15行之间的源码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">(gdb) l 3,15</span><br><span class="line">3    &#123;</span><br><span class="line">4        if( n &lt; 0)</span><br><span class="line">5            return;</span><br><span class="line">6        while(n &gt; 0)</span><br><span class="line">7        &#123;</span><br><span class="line">8            printf(&quot;%d\n&quot;,n);</span><br><span class="line">9            n--;</span><br><span class="line">10        &#125;</span><br><span class="line">11    &#125;</span><br><span class="line">12    </span><br><span class="line">13    void printNum1(int n)</span><br><span class="line">14    &#123;</span><br><span class="line">15        if( n &lt; 0)</span><br></pre></td></tr></table></figure></p>
+<p>启始行和结束行号之间用逗号隔开。两者之一也可以省略，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(gdb) list 3,</span><br><span class="line">3    &#123;</span><br><span class="line">4        if( n &lt; 0)</span><br><span class="line">5            return;</span><br><span class="line">6        while(n &gt; 0)</span><br><span class="line">7        &#123;</span><br><span class="line">8            printf(&quot;%d\n&quot;,n);</span><br><span class="line">9            n--;</span><br><span class="line">10        &#125;</span><br><span class="line">11    &#125;</span><br><span class="line">12</span><br></pre></td></tr></table></figure></p>
+<p>省略结束行的时候，它列出从开始行开始，到指定大小行结束，而省略开始行的时候，到结束行结束，列出设置的大小行，例如默认设置为10行，则到结束行为止，总共列出10行。前面我们也介绍了修改和查看默认列出源码行数的方法。</p>
+<h4 id="列出指定文件的源码"><a href="#列出指定文件的源码" class="headerlink" title="列出指定文件的源码"></a>列出指定文件的源码</h4><p>前面执行l命令时，默认列出main.c的源码，如果想要看指定文件的源码呢？可以<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">l location</span><br></pre></td></tr></table></figure></p>
+<p>其中location可以是<strong>文件名加行号或函数名</strong>，因此可以使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) l test.c:1</span><br><span class="line">1    #include&quot;test.h&quot;</span><br><span class="line">2    void printNum(int n)</span><br><span class="line">3    &#123;</span><br><span class="line">4        if( n &lt; 0)</span><br><span class="line">5            return;</span><br><span class="line">6        while(n &gt; 0)</span><br><span class="line">7        &#123;</span><br><span class="line">8            printf(&quot;%d\n&quot;,n);</span><br><span class="line">9            n--;</span><br><span class="line">10        &#125;</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>来查看指定文件指定行，或者指定文件指定函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) l test.c:printNum1</span><br><span class="line">9            n--;</span><br><span class="line">10        &#125;</span><br><span class="line">11    &#125;</span><br><span class="line">12    </span><br><span class="line">13    void printNum1(int n)</span><br><span class="line">14    &#123;</span><br><span class="line">15        if( n &lt; 0)</span><br><span class="line">16            return;</span><br><span class="line">17        int i = 1;</span><br><span class="line">18        while(i &lt;= n)</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>或者指定文件指定行之间：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb) l test.c:1,test.c:3</span><br><span class="line">1    #include&quot;test.h&quot;</span><br><span class="line">2    void printNum(int n)</span><br><span class="line">3    &#123;</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<h2 id="指定源码路径"><a href="#指定源码路径" class="headerlink" title="指定源码路径"></a>指定源码路径</h2><p>在查看源码之前，首先要确保我们的程序能够关联到源码，一般来说，我们在自己的机器上加上-g参数编译完之后，使用gdb都能查看到源码，但是如果出现下面的情况呢？</p>
+<h4 id="源码被移走"><a href="#源码被移走" class="headerlink" title="源码被移走"></a>源码被移走</h4><p>例如，我现在将main.c移动到当前的temp目录下，再执行l命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) l</span><br><span class="line">1    main.c: No such file or directory.</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>它就会提示找不到源码文件了，那么怎么办呢？<br>我们可以使用dir命名指定源码路径，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) dir ./temp</span><br><span class="line">Source directories searched: /home/hyb/workspaces/gdb/sourceCode/./temp:$cdir:$cwd</span><br></pre></td></tr></table></figure></p>
+<p>这个时候它就能找到源码路径了。我这里使用的是相对路径，保险起见，你也可以使用绝对路径。</p>
+<h4 id="更换源码目录"><a href="#更换源码目录" class="headerlink" title="更换源码目录"></a>更换源码目录</h4><p>例如，你编译好的程序文件，放到了另外一台机器上进行调试，或者你的源码文件全都移动到了另外一个目录，怎么办呢？当然你还可以使用前面的方法添加源码搜索路径，也可以使用set substitute-path from to将原来的路径替换为新的路径，那么我们如何知道原来的源码路径是什么呢？借助readelf命令可以知道：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ readelf main -p .debug_str</span><br><span class="line">  [     0]  long unsigned int</span><br><span class="line">  [    12]  short int</span><br><span class="line">  [    1c]  /home/hyb/workspaces/gdb/sourceCode</span><br><span class="line">  [    40]  main.c</span><br><span class="line">（显示部分内容）</span><br></pre></td></tr></table></figure></p>
+<p>main为你将要调试的程序名，这里我们可以看到原来的路径，那么我们现在替换掉它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb) set substitute-path /home/hyb/workspaces/gdb/sourceCode /home/hyb/workspaces/gdb/sourceCode/temp</span><br><span class="line">(gdb) show substitute-path</span><br><span class="line">List of all source path substitution rules:</span><br><span class="line">  `/home/hyb/workspaces/gdb/sourceCode&apos; -&gt; `/home/hyb/workspaces/gdb/sourceCode/temp&apos;.</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure></p>
+<p>设置完成后，可以通过show substitute-path来查看设置结果。这样它也能在正确的路径查找源码啦。</p>
+<p>需要注意的是，这里<strong>对路径做了字符串替换</strong>，那么如果你有多个路径，可以做多个替换。甚至可以对指定文件路径进行替换。</p>
+<p>最后你也可以通过unset substitute-path [path]取消替换。</p>
+<h2 id="编辑源码"><a href="#编辑源码" class="headerlink" title="编辑源码"></a>编辑源码</h2><p>为了避免已经启动了调试之后，需要编辑源码，又不想退出，可以直接在gdb模式下编辑源码，它默认使用的编辑器是/bin/ex，但是你的机器上可能没有这个编辑器，或者你想使用自己熟悉的编辑器，那么可以通过下面的方式进行设置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ EDITOR=/usr/bin/vim</span><br><span class="line">$ export EDITOR</span><br></pre></td></tr></table></figure></p>
+<p>/usr/bin/vim可以替换为你熟悉的编辑器的路径，如果你不知道你的编辑器在什么位置，可借助whereis命令或者witch命令查看：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ whereis vim</span><br><span class="line">vim: /usr/bin/vim /usr/bin/vim.tiny /usr/bin/vim.basic /usr/bin/vim.gnome /etc/vim /usr/share/vim /usr/share/man/man1/vim.1.gz</span><br><span class="line">$ which vim</span><br><span class="line">/usr/bin/vim</span><br></pre></td></tr></table></figure></p>
+<p>设置之后，就可以在gdb调试模式下进行编辑源码了，使用命令edit location，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb)edit 3  #编辑第三行</span><br><span class="line">(gdb)edit printNum #编辑printNum函数</span><br><span class="line">(gdb)edit test.c:5 #编辑test.c第五行</span><br></pre></td></tr></table></figure>
+<p>可自行尝试，这里的location和前面介绍的一样，可以跟指定文件的特定行或指定文件的指定函数。<br>编辑完保存后，别忘了重新编译程序：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(gdb)shell gcc -g -o main main.c test.c</span><br></pre></td></tr></table></figure></p>
+<p>这里要注意，为了在gdb调试模式下执行shell命令，需要在命令之前加上shell，表明这是一条shell命令。这样就能在不用退出GDB调试模式的情况下编译程序了。</p>
+<h2 id="另外一种模式"><a href="#另外一种模式" class="headerlink" title="另外一种模式"></a>另外一种模式</h2><p>启动时，带上tui(Text User Interface)参数，会有意想不到的效果，它会将调试在多个文本窗口呈现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb main -tui</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://github.com/yanbinghu/BlogImages/raw/master/articles/GDB%E8%B0%83%E8%AF%95%E6%8C%87%E5%8D%97-%E6%BA%90%E7%A0%81%E6%9F%A5%E7%9C%8B/gdb-tui.png" alt="GDB-TUI"></p>
+<p>但是本文不作介绍，有兴趣的可以探索一下。</p>
+<h2 id="总结-4"><a href="#总结-4" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了GDB调试中的源码查看，源码编辑以及如何在GDB调试模式下执行shell命令。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/pictures/qrcode.jpg" alt="守望 wechat" style="width: 200px; max-width: 100%;">
+    <div>关注公众号[编程珠玑]获取更多原创技术文章</div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>出入相友，守望相助！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/wechatpay.jpg" alt="守望 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/alipay.jpg" alt="守望 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    守望
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.yanbinghu.com/2019/04/20/41283.html" title="GDB调试指南">https://www.yanbinghu.com/2019/04/20/41283.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本文为原创文章，版权归<a href="https://www.yanbinghu.com">守望</a>所有，并采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请<a href="mailto:yanbinghu@yanbinghu.com">联系本人</a>！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gdb/" rel="tag"><i class="fa fa-tag"></i> gdb</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/48046.html" rel="next" title="《深入Linux内核架构》摘要">
+                <i class="fa fa-chevron-left"></i> 《深入Linux内核架构》摘要
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/26641.html" rel="prev" title="只有程序员才会玩的游戏">
+                只有程序员才会玩的游戏 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- Go to www.addthis.com/dashboard to customize your tools -->
+<div class="addthis_inline_share_toolbox">
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=2134076" async="async"></script>
+</div>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+ <div id="gitalk-container"></div>
+  
+
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="守望">
+            
+              <p class="site-author-name" itemprop="name">守望</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">180</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:yanbinghu@yanbinghu.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.yanbinghu.com/about/" target="_blank" title="公众号">
+                    
+                      <i class="fa fa-fw fa-globe"></i>公众号</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-globe"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.javazhiyin.com" title="Java知音" target="_blank">Java知音</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.strongerhuang.com" title="EmbeddedDevelop" target="_blank">EmbeddedDevelop</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+<div class="widget-wrap">
+    <h3 class="widget-title">目录</h3>
+	<div class="category-all-page">
+		<div class="category-all">
+		  <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C</a><span class="category-list-count">52</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cpp/">Cpp</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go/">Go</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shell/">Shell</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gdb/">gdb</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/leetcode/">leetcode</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><span class="category-list-count">41</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/resource/">resource</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/windows/">windows</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/单元测试/">单元测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工作面试/">工作面试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据结构与算法/">数据结构与算法</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/程序员/">程序员</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络编程/">网络编程</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/读书/">读书</a><span class="category-list-count">10</span></li></ul>
+		</div>
+	</div>
+</div>
+
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#总览"><span class="nav-number">1.</span> <span class="nav-text">总览</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启动调试"><span class="nav-number">2.</span> <span class="nav-text">启动调试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">2.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#哪类程序可被调试"><span class="nav-number">2.2.</span> <span class="nav-text">哪类程序可被调试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gdb-文件"><span class="nav-number">2.2.0.1.</span> <span class="nav-text">gdb 文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#readelf查看段信息"><span class="nav-number">2.2.0.2.</span> <span class="nav-text">readelf查看段信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#file查看strip状况"><span class="nav-number">2.2.0.3.</span> <span class="nav-text">file查看strip状况</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调试方式运行程序"><span class="nav-number">2.3.</span> <span class="nav-text">调试方式运行程序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#调试启动无参程序"><span class="nav-number">2.3.0.1.</span> <span class="nav-text">调试启动无参程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调试启动带参程序"><span class="nav-number">2.3.0.2.</span> <span class="nav-text">调试启动带参程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调试core文件"><span class="nav-number">2.3.0.3.</span> <span class="nav-text">调试core文件</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#调试已运行程序"><span class="nav-number">2.4.</span> <span class="nav-text">调试已运行程序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#attach方式"><span class="nav-number">2.4.0.1.</span> <span class="nav-text">attach方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#直接调试相关id进程"><span class="nav-number">2.4.0.2.</span> <span class="nav-text">直接调试相关id进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#已运行程序没有调试信息"><span class="nav-number">2.4.0.3.</span> <span class="nav-text">已运行程序没有调试信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#断点设置"><span class="nav-number">3.</span> <span class="nav-text">断点设置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言-1"><span class="nav-number">3.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为何要设置断点"><span class="nav-number">3.2.</span> <span class="nav-text">为何要设置断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看已设置的断点"><span class="nav-number">3.3.</span> <span class="nav-text">查看已设置的断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#断点设置-1"><span class="nav-number">3.4.</span> <span class="nav-text">断点设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#根据行号设置断点"><span class="nav-number">3.4.0.1.</span> <span class="nav-text">根据行号设置断点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#根据函数名设置断点"><span class="nav-number">3.4.0.2.</span> <span class="nav-text">根据函数名设置断点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#根据条件设置断点"><span class="nav-number">3.4.0.3.</span> <span class="nav-text">根据条件设置断点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#根据规则设置断点"><span class="nav-number">3.4.0.4.</span> <span class="nav-text">根据规则设置断点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置临时断点"><span class="nav-number">3.4.0.5.</span> <span class="nav-text">设置临时断点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#跳过多次设置断点"><span class="nav-number">3.4.0.6.</span> <span class="nav-text">跳过多次设置断点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#根据表达式值变化产生断点"><span class="nav-number">3.4.0.7.</span> <span class="nav-text">根据表达式值变化产生断点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#禁用或启动断点"><span class="nav-number">3.5.</span> <span class="nav-text">禁用或启动断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#断点清除"><span class="nav-number">3.6.</span> <span class="nav-text">断点清除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-1"><span class="nav-number">3.7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#变量查看"><span class="nav-number">4.</span> <span class="nav-text">变量查看</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言-2"><span class="nav-number">4.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备工作"><span class="nav-number">4.2.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#普通变量查看"><span class="nav-number">4.3.</span> <span class="nav-text">普通变量查看</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#打印基本类型变量，数组，字符数组"><span class="nav-number">4.3.0.1.</span> <span class="nav-text">打印基本类型变量，数组，字符数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打印指针指向内容"><span class="nav-number">4.3.0.2.</span> <span class="nav-text">打印指针指向内容</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#按照特定格式打印变量"><span class="nav-number">4.4.</span> <span class="nav-text">按照特定格式打印变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看内存内容"><span class="nav-number">4.5.</span> <span class="nav-text">查看内存内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动显示变量内容"><span class="nav-number">4.6.</span> <span class="nav-text">自动显示变量内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看寄存器内容"><span class="nav-number">4.7.</span> <span class="nav-text">查看寄存器内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-2"><span class="nav-number">4.8.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#单步调试"><span class="nav-number">5.</span> <span class="nav-text">单步调试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言-3"><span class="nav-number">5.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备"><span class="nav-number">5.2.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单步执行-next"><span class="nav-number">5.3.</span> <span class="nav-text">单步执行-next</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单步进入-step"><span class="nav-number">5.4.</span> <span class="nav-text">单步进入-step</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#继续执行到下一个断点-continue"><span class="nav-number">5.5.</span> <span class="nav-text">继续执行到下一个断点-continue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#继续运行到指定位置-until"><span class="nav-number">5.6.</span> <span class="nav-text">继续运行到指定位置-until</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#跳过执行—skip"><span class="nav-number">5.7.</span> <span class="nav-text">跳过执行—skip</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-3"><span class="nav-number">5.8.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码查看"><span class="nav-number">6.</span> <span class="nav-text">源码查看</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言-4"><span class="nav-number">6.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备工作-1"><span class="nav-number">6.2.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#列出源码"><span class="nav-number">6.3.</span> <span class="nav-text">列出源码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#直接打印源码"><span class="nav-number">6.3.0.1.</span> <span class="nav-text">直接打印源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#列出指定行附近源码"><span class="nav-number">6.3.0.2.</span> <span class="nav-text">列出指定行附近源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#列出指定函数附近的源码"><span class="nav-number">6.3.0.3.</span> <span class="nav-text">列出指定函数附近的源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置源码一次列出行数"><span class="nav-number">6.3.0.4.</span> <span class="nav-text">设置源码一次列出行数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#列出指定行之间的源码"><span class="nav-number">6.3.0.5.</span> <span class="nav-text">列出指定行之间的源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#列出指定文件的源码"><span class="nav-number">6.3.0.6.</span> <span class="nav-text">列出指定文件的源码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指定源码路径"><span class="nav-number">6.4.</span> <span class="nav-text">指定源码路径</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#源码被移走"><span class="nav-number">6.4.0.1.</span> <span class="nav-text">源码被移走</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更换源码目录"><span class="nav-number">6.4.0.2.</span> <span class="nav-text">更换源码目录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编辑源码"><span class="nav-number">6.5.</span> <span class="nav-text">编辑源码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#另外一种模式"><span class="nav-number">6.6.</span> <span class="nav-text">另外一种模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-4"><span class="nav-number">6.7.</span> <span class="nav-text">总结</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">守望</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+<div>
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1277113960'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s5.cnzz.com/z_stat.php%3Fid%3D1277113960%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/gitalk/gitalk.css">
+  
+  <script src="/lib/gitalk/gitalk.min.js"></script>
+   <script type="text/javascript">
+		var gitalk = new Gitalk({
+		  clientID: 'ede3b4c45efafd567659',
+		  clientSecret: 'a1b520b96a030165bd3bde65c37121e82e3509b3',
+		  repo: 'BlogComments',
+		  owner: 'yanbinghu',
+		  admin: ['yanbinghu'], 
+		  id: location.pathname,
+		  distractionFreeMode: 'true'
+		})
+		gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("3QkijkMW8MUrMYO01qifxcDz-gzGzoHsz", "M3hmJ4JUXBhFXYgvyExsbFTP");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.3"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.3"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+</body>
+</html>

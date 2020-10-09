@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="笔记,redis,数据库,高性能,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="守望的个人博客" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言简介Redis 是完全开源免费的，遵守BSD协议，是一个高性能的key-value数据库。 特点1.支持持久化2.支持list，set，zset，hash等结构存储3.支持主从模式的数据备份 优势1.性能高2.数据类型丰富3.原子性4.特定丰富 修改配置CONFIG SET CONFIG_SETTING_NAME NEW_CONFIG_VALUE">
+<meta name="keywords" content="笔记,redis,数据库,高性能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis-阅读笔记">
+<meta property="og:url" content="https://www.yanbinghu.com/2017/10/05/10234.html">
+<meta property="og:site_name" content="守望的个人博客">
+<meta property="og:description" content="前言简介Redis 是完全开源免费的，遵守BSD协议，是一个高性能的key-value数据库。 特点1.支持持久化2.支持list，set，zset，hash等结构存储3.支持主从模式的数据备份 优势1.性能高2.数据类型丰富3.原子性4.特定丰富 修改配置CONFIG SET CONFIG_SETTING_NAME NEW_CONFIG_VALUE">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-10-05T04:01:06.760Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="redis-阅读笔记">
+<meta name="twitter:description" content="前言简介Redis 是完全开源免费的，遵守BSD协议，是一个高性能的key-value数据库。 特点1.支持持久化2.支持list，set，zset，hash等结构存储3.支持主从模式的数据备份 优势1.性能高2.数据类型丰富3.原子性4.特定丰富 修改配置CONFIG SET CONFIG_SETTING_NAME NEW_CONFIG_VALUE">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yanbinghu.com/2017/10/05/10234.html">
+
+
+
+
+
+  <title>redis-阅读笔记 | 守望的个人博客</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99619048-1', 'auto');
+  ga('send', 'pageview');
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+<link rel="stylesheet" href="/css/prism-atom-dark.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"><script src="/js/prism.js"></script>
+<script src="/js/prism-line-numbers.min.js"></script></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">守望的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">编程珠玑</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-linux">
+          <a href="/categories/linux" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Linux
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-c">
+          <a href="/categories/C" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            C
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-c++">
+          <a href="/categories/Cpp" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            C++
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-数据结构与算法">
+          <a href="/categories/数据结构与算法" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            数据结构与算法
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-书籍">
+          <a href="/books/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br>
+            
+            书籍
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-gdb调试指南">
+          <a href="/2019/04/20/41283.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            GDB调试指南
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yanbinghu.com/2017/10/05/10234.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="守望">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="守望的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">redis-阅读笔记</h2>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-05T11:00:00+08:00">
+                2017-10-05
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-10-05T12:01:06+08:00">
+                2020-10-05
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/10/05/10234.html" class="leancloud_visitors" data-flag-title="redis-阅读笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Redis 是完全开源免费的，遵守BSD协议，是一个高性能的key-value数据库。</p>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>1.支持持久化<br>2.支持list，set，zset，hash等结构存储<br>3.支持主从模式的数据备份</p>
+<h3 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h3><p>1.性能高<br>2.数据类型丰富<br>3.原子性<br>4.特定丰富</p>
+<h3 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h3><p>CONFIG SET CONFIG_SETTING_NAME NEW_CONFIG_VALUE<br><a id="more"></a></p>
+<h2 id="redis数据类型"><a href="#redis数据类型" class="headerlink" title="redis数据类型"></a>redis数据类型</h2><h3 id="String（字符串）"><a href="#String（字符串）" class="headerlink" title="String（字符串）"></a>String（字符串）</h3><p>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set name &quot;hyb&quot;</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line">&quot;hyb&quot;</span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Hash-哈希-—适合存储对象"><a href="#Hash-哈希-—适合存储对象" class="headerlink" title="Hash(哈希)—适合存储对象"></a>Hash(哈希)—适合存储对象</h3><p>redis hash 是一个键值对集合。<br>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; hmset student:1 stuName hyb sex male</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; hgetall student:1</span><br><span class="line">1) &quot;stuName&quot;</span><br><span class="line">2) &quot;hyb&quot;</span><br><span class="line">3) &quot;sex&quot;</span><br><span class="line">4) &quot;male&quot;</span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="list（列表）"><a href="#list（列表）" class="headerlink" title="list（列表）"></a>list（列表）</h3><p>按照插入顺序排序的元素集合。集合内元素可以不唯一<br>lpush key member<br>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; lpush testList a</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; lpush testList b</span><br><span class="line">(integer) 2</span><br><span class="line">127.0.0.1:6379&gt; lpush testList b</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; lrange testList 0 2</span><br><span class="line">1) &quot;b&quot;</span><br><span class="line">2) &quot;b&quot;</span><br><span class="line">3) &quot;a&quot;</span><br></pre></td></tr></table></figure></p>
+<h3 id="set（集合）-无序集合"><a href="#set（集合）-无序集合" class="headerlink" title="set（集合）-无序集合"></a>set（集合）-无序集合</h3><p>集合内元素唯一<br>sadd key member<br>实例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; sadd  testSet a</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd  testSet b</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd  testSet b</span><br><span class="line">(integer) 0</span><br><span class="line">127.0.0.1:6379&gt; smembers testSet</span><br><span class="line">1) &quot;b&quot;</span><br><span class="line">2) &quot;a&quot;</span><br></pre></td></tr></table></figure></p>
+<h3 id="zset-有序集合"><a href="#zset-有序集合" class="headerlink" title="zset -有序集合"></a>zset -有序集合</h3><p>每个元素都会关联一个double类型的分数。redis通过分数来进行排序<br>zadd  key  score  member<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; zadd testZset 1 aa</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; zadd testZset 2 bb</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; zadd testZset 3 bb</span><br><span class="line">(integer) 0</span><br><span class="line">127.0.0.1:6379&gt; zadd testZset 4 qw</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; ZRANGEBYSCORE testZset 0 5</span><br><span class="line">1) &quot;aa&quot;</span><br><span class="line">2) &quot;bb&quot;</span><br><span class="line">3) &quot;qw&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="redis-命令"><a href="#redis-命令" class="headerlink" title="redis 命令"></a>redis 命令</h2><h3 id="连接远程redis服务器"><a href="#连接远程redis服务器" class="headerlink" title="连接远程redis服务器"></a>连接远程redis服务器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli  -h host -p port -a password</span><br></pre></td></tr></table></figure>
+<h3 id="keys-命令"><a href="#keys-命令" class="headerlink" title="keys 命令"></a>keys 命令</h3><h5 id="del-key"><a href="#del-key" class="headerlink" title="del key"></a>del key</h5><p>key存在是删除key</p>
+<h5 id="DUMP-KEY"><a href="#DUMP-KEY" class="headerlink" title="DUMP KEY"></a>DUMP KEY</h5><p>序列化给定key，并返回被序列化的值</p>
+<h5 id="EXISTS-KEY"><a href="#EXISTS-KEY" class="headerlink" title="EXISTS KEY"></a>EXISTS KEY</h5><p>检查给定key 是否存在</p>
+<h5 id="EXPIRE-KEY-SECONDS"><a href="#EXPIRE-KEY-SECONDS" class="headerlink" title="EXPIRE KEY SECONDS"></a>EXPIRE KEY SECONDS</h5><p>为key设置过期时间</p>
+<h5 id="EXPIREAT-KEY-TIMESTAMP"><a href="#EXPIREAT-KEY-TIMESTAMP" class="headerlink" title="EXPIREAT KEY  TIMESTAMP"></a>EXPIREAT KEY  TIMESTAMP</h5><pre><code>时间参数为unix时间戳
+</code></pre><h5 id="EXPIRE-KEY-MILLISECONDS"><a href="#EXPIRE-KEY-MILLISECONDS" class="headerlink" title="EXPIRE KEY MILLISECONDS"></a>EXPIRE KEY MILLISECONDS</h5><p>设置key的过期时间，以毫秒计</p>
+<h5 id="KEYS-pattern"><a href="#KEYS-pattern" class="headerlink" title="KEYS pattern"></a>KEYS pattern</h5><p>查找所有符合给定模式（pattern）的key</p>
+<h5 id="MOVE-KEY-DB"><a href="#MOVE-KEY-DB" class="headerlink" title="MOVE KEY  DB"></a>MOVE KEY  DB</h5><p>将当前数据库的key移动到给定的数据录db当中</p>
+<h5 id="PERSIST-KEY"><a href="#PERSIST-KEY" class="headerlink" title="PERSIST KEY"></a>PERSIST KEY</h5><p>移除key的过期时间</p>
+<h5 id="PTTL-KEY"><a href="#PTTL-KEY" class="headerlink" title="PTTL KEY"></a>PTTL KEY</h5><p>返回key的剩余过期时间，毫秒为单位</p>
+<h5 id="TTL-key"><a href="#TTL-key" class="headerlink" title="TTL key"></a>TTL key</h5><p>返回key的剩余货期时间，秒为单位</p>
+<h5 id="RANDOMKEY"><a href="#RANDOMKEY" class="headerlink" title="RANDOMKEY"></a>RANDOMKEY</h5><p>从当前数据库中随机返回一个key</p>
+<h5 id="RENAME-KEY-NEWKEY"><a href="#RENAME-KEY-NEWKEY" class="headerlink" title="RENAME KEY NEWKEY"></a>RENAME KEY NEWKEY</h5><p>修改key的名称</p>
+<h5 id="RENAMENX-KEY-NEWKEY"><a href="#RENAMENX-KEY-NEWKEY" class="headerlink" title="RENAMENX KEY NEWKEY"></a>RENAMENX KEY NEWKEY</h5><p>仅当newkey不存在时，将key改名为newkey</p>
+<h5 id="TYPE-KEY"><a href="#TYPE-KEY" class="headerlink" title="TYPE KEY"></a>TYPE KEY</h5><p>返回key所存储的值的类型</p>
+<h3 id="String-命令"><a href="#String-命令" class="headerlink" title="String 命令"></a>String 命令</h3><h5 id="SET-KEY-VALUE"><a href="#SET-KEY-VALUE" class="headerlink" title="SET KEY VALUE"></a>SET KEY VALUE</h5><p>设置指定key的值</p>
+<h5 id="GET-KEY"><a href="#GET-KEY" class="headerlink" title="GET KEY"></a>GET KEY</h5><p>获取指定key的值</p>
+<h5 id="GETRANGE-KEY-START-END"><a href="#GETRANGE-KEY-START-END" class="headerlink" title="GETRANGE KEY START END"></a>GETRANGE KEY START END</h5><p>返回key中字符串值的子字符</p>
+<h5 id="GETSET-KEY-VALUE"><a href="#GETSET-KEY-VALUE" class="headerlink" title="GETSET KEY VALUE"></a>GETSET KEY VALUE</h5><p>将给定的key的值设为value，并返回key的旧值。</p>
+<h5 id="MGET-KEY1-KEY2"><a href="#MGET-KEY1-KEY2" class="headerlink" title="MGET KEY1 KEY2"></a>MGET KEY1 KEY2</h5><p>获取所有给定key 的值</p>
+<h5 id="SETEX-KEY-SECONDS-VALUE"><a href="#SETEX-KEY-SECONDS-VALUE" class="headerlink" title="SETEX KEY SECONDS VALUE"></a>SETEX KEY SECONDS VALUE</h5><p>将值value关联到key，并将key的过期时间设为seconds</p>
+<h5 id="SETNX-KEY-VALUE"><a href="#SETNX-KEY-VALUE" class="headerlink" title="SETNX KEY VALUE"></a>SETNX KEY VALUE</h5><p>只有在key不存在时设置key的值</p>
+<h5 id="SETRANGE-KEY-OFFSET-VALUE"><a href="#SETRANGE-KEY-OFFSET-VALUE" class="headerlink" title="SETRANGE KEY OFFSET VALUE"></a>SETRANGE KEY OFFSET VALUE</h5><p>用value 参数覆写给定key所存储的字符串值，从偏移量offset开始</p>
+<h5 id="SETLEN-KEY"><a href="#SETLEN-KEY" class="headerlink" title="SETLEN KEY"></a>SETLEN KEY</h5><p>返回key所存储的字符串的长度</p>
+<h5 id="MSET-KEY-VALUE-KEY-VALUE"><a href="#MSET-KEY-VALUE-KEY-VALUE" class="headerlink" title="MSET KEY VALUE[KEY VALUE]"></a>MSET KEY VALUE[KEY VALUE]</h5><p>同时设置一个或多个key-value对</p>
+<h5 id="MSETNX-KEY-VALUE-KEY-VALUE"><a href="#MSETNX-KEY-VALUE-KEY-VALUE" class="headerlink" title="MSETNX KEY VALUE[KEY VALUE]"></a>MSETNX KEY VALUE[KEY VALUE]</h5><p>同时设置一个或多个key-value对，当且仅当所有给定key都不存在</p>
+<h5 id="APPEND-KEY-VALUE"><a href="#APPEND-KEY-VALUE" class="headerlink" title="APPEND KEY VALUE"></a>APPEND KEY VALUE</h5><p>如果key已经存在并且是一个字符串，append命令将value添加到key原来值的末尾</p>
+<h3 id="hash"><a href="#hash" class="headerlink" title="hash"></a>hash</h3><h5 id="HDEL-KEY-FIELD1-FIELD2"><a href="#HDEL-KEY-FIELD1-FIELD2" class="headerlink" title="HDEL KEY FIELD1 [FIELD2]"></a>HDEL KEY FIELD1 [FIELD2]</h5><p>删除一个或者多个hash表字段</p>
+<h5 id="HEXISTS-KEY-FIELD"><a href="#HEXISTS-KEY-FIELD" class="headerlink" title="HEXISTS KEY FIELD"></a>HEXISTS KEY FIELD</h5><p>查看hash表中指定字段是否存在</p>
+<h5 id="HGET-KEY-FIELD"><a href="#HGET-KEY-FIELD" class="headerlink" title="HGET KEY FIELD"></a>HGET KEY FIELD</h5><p>获取存储在hash中指定字段的值</p>
+<h5 id="HGETALL-KEY"><a href="#HGETALL-KEY" class="headerlink" title="HGETALL KEY"></a>HGETALL KEY</h5><p>获取hash中指定key所有字段和值</p>
+<h5 id="HKEYS-KEY"><a href="#HKEYS-KEY" class="headerlink" title="HKEYS KEY"></a>HKEYS KEY</h5><p>获取所有hash表中的字段</p>
+<h5 id="HLEN-KEY"><a href="#HLEN-KEY" class="headerlink" title="HLEN KEY"></a>HLEN KEY</h5><p>获取hash表中字段的数量</p>
+<h5 id="HMGET-KEY-FIELD1-FIELD2"><a href="#HMGET-KEY-FIELD1-FIELD2" class="headerlink" title="HMGET KEY FIELD1 [FIELD2]"></a>HMGET KEY FIELD1 [FIELD2]</h5><p>获取所有给定字段的值</p>
+<h5 id="HMSET-KEY-FIELD1-VALUE1-FIELD2-VALUE2"><a href="#HMSET-KEY-FIELD1-VALUE1-FIELD2-VALUE2" class="headerlink" title="HMSET KEY FIELD1 VALUE1 [FIELD2 VALUE2]"></a>HMSET KEY FIELD1 VALUE1 [FIELD2 VALUE2]</h5><p>同时将多个field-value对设置到hash表key中</p>
+<h5 id="HSET-KEY-FIELD-VALUE"><a href="#HSET-KEY-FIELD-VALUE" class="headerlink" title="HSET KEY FIELD VALUE"></a>HSET KEY FIELD VALUE</h5><p>将哈希表key中的字段field的值设为value</p>
+<h5 id="HSETNX-KEY-FIELD-VALUE"><a href="#HSETNX-KEY-FIELD-VALUE" class="headerlink" title="HSETNX KEY FIELD VALUE"></a>HSETNX KEY FIELD VALUE</h5><p>只有在字段field不存在时，设置哈希表字段的值</p>
+<h5 id="HVALS-KEY"><a href="#HVALS-KEY" class="headerlink" title="HVALS KEY"></a>HVALS KEY</h5><p>获取hash表中所有值</p>
+<h3 id="LIST"><a href="#LIST" class="headerlink" title="LIST"></a>LIST</h3><h5 id="BLPOP-KEY1-KEY2-timeout"><a href="#BLPOP-KEY1-KEY2-timeout" class="headerlink" title="BLPOP KEY1 [KEY2] timeout"></a>BLPOP KEY1 [KEY2] timeout</h5><p>移出并获取列表的第一个元素，如果列表中没有元素会阻塞列表直到等待超时或者发现可弹出元素为止</p>
+<h5 id><a href="#" class="headerlink" title=" "></a> </h5><h3 id="set"><a href="#set" class="headerlink" title="set"></a>set</h3><h3 id="zset"><a href="#zset" class="headerlink" title="zset"></a>zset</h3><h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="发布订阅"><a href="#发布订阅" class="headerlink" title="发布订阅"></a>发布订阅</h3><h3 id="事物"><a href="#事物" class="headerlink" title="事物"></a>事物</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NULTI</span><br><span class="line">redis command</span><br><span class="line">......</span><br><span class="line">EXEC</span><br></pre></td></tr></table></figure>
+<h3 id="脚本"><a href="#脚本" class="headerlink" title="脚本"></a>脚本</h3><h5 id="EVAL-script-numkeys-key-key-…-arg-arg-…"><a href="#EVAL-script-numkeys-key-key-…-arg-arg-…" class="headerlink" title="EVAL script numkeys key [key …] arg [arg …]"></a>EVAL script numkeys key [key …] arg [arg …]</h5><p>执行lua脚本</p>
+<h5 id="EVALSHA-sha1-numkeys-key-key-…-arg-arg-…"><a href="#EVALSHA-sha1-numkeys-key-key-…-arg-arg-…" class="headerlink" title="EVALSHA sha1 numkeys key [key …] arg [arg …]"></a>EVALSHA sha1 numkeys key [key …] arg [arg …]</h5><p>执行lua脚本</p>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2>
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/pictures/qrcode.jpg" alt="守望 wechat" style="width: 200px; max-width: 100%;">
+    <div>关注公众号[编程珠玑]获取更多原创技术文章</div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>出入相友，守望相助！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/wechatpay.jpg" alt="守望 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/alipay.jpg" alt="守望 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    守望
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.yanbinghu.com/2017/10/05/10234.html" title="redis-阅读笔记">https://www.yanbinghu.com/2017/10/05/10234.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本文为原创文章，版权归<a href="https://www.yanbinghu.com">守望</a>所有，并采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请<a href="mailto:yanbinghu@yanbinghu.com">联系本人</a>！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/笔记/" rel="tag"><i class="fa fa-tag"></i> 笔记</a>
+          
+            <a href="/tags/redis/" rel="tag"><i class="fa fa-tag"></i> redis</a>
+          
+            <a href="/tags/数据库/" rel="tag"><i class="fa fa-tag"></i> 数据库</a>
+          
+            <a href="/tags/高性能/" rel="tag"><i class="fa fa-tag"></i> 高性能</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/19/43578.html" rel="next" title="python爬虫实战（一）--爬取知乎话题图片">
+                <i class="fa fa-chevron-left"></i> python爬虫实战（一）--爬取知乎话题图片
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/07/44845.html" rel="prev" title="lua脚本操作redis数据库介绍">
+                lua脚本操作redis数据库介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- Go to www.addthis.com/dashboard to customize your tools -->
+<div class="addthis_inline_share_toolbox">
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=2134076" async="async"></script>
+</div>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+ <div id="gitalk-container"></div>
+  
+
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="守望">
+            
+              <p class="site-author-name" itemprop="name">守望</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">180</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:yanbinghu@yanbinghu.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.yanbinghu.com/about/" target="_blank" title="公众号">
+                    
+                      <i class="fa fa-fw fa-globe"></i>公众号</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-globe"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.javazhiyin.com" title="Java知音" target="_blank">Java知音</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.strongerhuang.com" title="EmbeddedDevelop" target="_blank">EmbeddedDevelop</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+<div class="widget-wrap">
+    <h3 class="widget-title">目录</h3>
+	<div class="category-all-page">
+		<div class="category-all">
+		  <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C</a><span class="category-list-count">52</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cpp/">Cpp</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go/">Go</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shell/">Shell</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gdb/">gdb</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/leetcode/">leetcode</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><span class="category-list-count">41</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/resource/">resource</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/windows/">windows</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/单元测试/">单元测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工作面试/">工作面试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工具/">工具</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据结构与算法/">数据结构与算法</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/程序员/">程序员</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络编程/">网络编程</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/读书/">读书</a><span class="category-list-count">10</span></li></ul>
+		</div>
+	</div>
+</div>
+
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特点"><span class="nav-number">1.2.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优势"><span class="nav-number">1.3.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改配置"><span class="nav-number">1.4.</span> <span class="nav-text">修改配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis数据类型"><span class="nav-number">2.</span> <span class="nav-text">redis数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#String（字符串）"><span class="nav-number">2.1.</span> <span class="nav-text">String（字符串）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash-哈希-—适合存储对象"><span class="nav-number">2.2.</span> <span class="nav-text">Hash(哈希)—适合存储对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#list（列表）"><span class="nav-number">2.3.</span> <span class="nav-text">list（列表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set（集合）-无序集合"><span class="nav-number">2.4.</span> <span class="nav-text">set（集合）-无序集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zset-有序集合"><span class="nav-number">2.5.</span> <span class="nav-text">zset -有序集合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis-命令"><span class="nav-number">3.</span> <span class="nav-text">redis 命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#连接远程redis服务器"><span class="nav-number">3.1.</span> <span class="nav-text">连接远程redis服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#keys-命令"><span class="nav-number">3.2.</span> <span class="nav-text">keys 命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#del-key"><span class="nav-number">3.2.0.1.</span> <span class="nav-text">del key</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DUMP-KEY"><span class="nav-number">3.2.0.2.</span> <span class="nav-text">DUMP KEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#EXISTS-KEY"><span class="nav-number">3.2.0.3.</span> <span class="nav-text">EXISTS KEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#EXPIRE-KEY-SECONDS"><span class="nav-number">3.2.0.4.</span> <span class="nav-text">EXPIRE KEY SECONDS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#EXPIREAT-KEY-TIMESTAMP"><span class="nav-number">3.2.0.5.</span> <span class="nav-text">EXPIREAT KEY  TIMESTAMP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#EXPIRE-KEY-MILLISECONDS"><span class="nav-number">3.2.0.6.</span> <span class="nav-text">EXPIRE KEY MILLISECONDS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#KEYS-pattern"><span class="nav-number">3.2.0.7.</span> <span class="nav-text">KEYS pattern</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MOVE-KEY-DB"><span class="nav-number">3.2.0.8.</span> <span class="nav-text">MOVE KEY  DB</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PERSIST-KEY"><span class="nav-number">3.2.0.9.</span> <span class="nav-text">PERSIST KEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PTTL-KEY"><span class="nav-number">3.2.0.10.</span> <span class="nav-text">PTTL KEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TTL-key"><span class="nav-number">3.2.0.11.</span> <span class="nav-text">TTL key</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RANDOMKEY"><span class="nav-number">3.2.0.12.</span> <span class="nav-text">RANDOMKEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RENAME-KEY-NEWKEY"><span class="nav-number">3.2.0.13.</span> <span class="nav-text">RENAME KEY NEWKEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RENAMENX-KEY-NEWKEY"><span class="nav-number">3.2.0.14.</span> <span class="nav-text">RENAMENX KEY NEWKEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TYPE-KEY"><span class="nav-number">3.2.0.15.</span> <span class="nav-text">TYPE KEY</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-命令"><span class="nav-number">3.3.</span> <span class="nav-text">String 命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SET-KEY-VALUE"><span class="nav-number">3.3.0.1.</span> <span class="nav-text">SET KEY VALUE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GET-KEY"><span class="nav-number">3.3.0.2.</span> <span class="nav-text">GET KEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GETRANGE-KEY-START-END"><span class="nav-number">3.3.0.3.</span> <span class="nav-text">GETRANGE KEY START END</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GETSET-KEY-VALUE"><span class="nav-number">3.3.0.4.</span> <span class="nav-text">GETSET KEY VALUE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MGET-KEY1-KEY2"><span class="nav-number">3.3.0.5.</span> <span class="nav-text">MGET KEY1 KEY2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SETEX-KEY-SECONDS-VALUE"><span class="nav-number">3.3.0.6.</span> <span class="nav-text">SETEX KEY SECONDS VALUE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SETNX-KEY-VALUE"><span class="nav-number">3.3.0.7.</span> <span class="nav-text">SETNX KEY VALUE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SETRANGE-KEY-OFFSET-VALUE"><span class="nav-number">3.3.0.8.</span> <span class="nav-text">SETRANGE KEY OFFSET VALUE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SETLEN-KEY"><span class="nav-number">3.3.0.9.</span> <span class="nav-text">SETLEN KEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MSET-KEY-VALUE-KEY-VALUE"><span class="nav-number">3.3.0.10.</span> <span class="nav-text">MSET KEY VALUE[KEY VALUE]</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MSETNX-KEY-VALUE-KEY-VALUE"><span class="nav-number">3.3.0.11.</span> <span class="nav-text">MSETNX KEY VALUE[KEY VALUE]</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#APPEND-KEY-VALUE"><span class="nav-number">3.3.0.12.</span> <span class="nav-text">APPEND KEY VALUE</span></a></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#hash"><span class="nav-number">3.4.</span> <span class="nav-text">hash</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#HDEL-KEY-FIELD1-FIELD2"><span class="nav-number">3.4.0.1.</span> <span class="nav-text">HDEL KEY FIELD1 [FIELD2]</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HEXISTS-KEY-FIELD"><span class="nav-number">3.4.0.2.</span> <span class="nav-text">HEXISTS KEY FIELD</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HGET-KEY-FIELD"><span class="nav-number">3.4.0.3.</span> <span class="nav-text">HGET KEY FIELD</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HGETALL-KEY"><span class="nav-number">3.4.0.4.</span> <span class="nav-text">HGETALL KEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HKEYS-KEY"><span class="nav-number">3.4.0.5.</span> <span class="nav-text">HKEYS KEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HLEN-KEY"><span class="nav-number">3.4.0.6.</span> <span class="nav-text">HLEN KEY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HMGET-KEY-FIELD1-FIELD2"><span class="nav-number">3.4.0.7.</span> <span class="nav-text">HMGET KEY FIELD1 [FIELD2]</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HMSET-KEY-FIELD1-VALUE1-FIELD2-VALUE2"><span class="nav-number">3.4.0.8.</span> <span class="nav-text">HMSET KEY FIELD1 VALUE1 [FIELD2 VALUE2]</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HSET-KEY-FIELD-VALUE"><span class="nav-number">3.4.0.9.</span> <span class="nav-text">HSET KEY FIELD VALUE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HSETNX-KEY-FIELD-VALUE"><span class="nav-number">3.4.0.10.</span> <span class="nav-text">HSETNX KEY FIELD VALUE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HVALS-KEY"><span class="nav-number">3.4.0.11.</span> <span class="nav-text">HVALS KEY</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LIST"><span class="nav-number">3.5.</span> <span class="nav-text">LIST</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#BLPOP-KEY1-KEY2-timeout"><span class="nav-number">3.5.0.1.</span> <span class="nav-text">BLPOP KEY1 [KEY2] timeout</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#null"><span class="nav-number">3.5.0.2.</span> <span class="nav-text"> </span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set"><span class="nav-number">3.6.</span> <span class="nav-text">set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zset"><span class="nav-number">3.7.</span> <span class="nav-text">zset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#发布订阅"><span class="nav-number">4.1.</span> <span class="nav-text">发布订阅</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事物"><span class="nav-number">4.2.</span> <span class="nav-text">事物</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#脚本"><span class="nav-number">4.3.</span> <span class="nav-text">脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#EVAL-script-numkeys-key-key-…-arg-arg-…"><span class="nav-number">4.3.0.1.</span> <span class="nav-text">EVAL script numkeys key [key …] arg [arg …]</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#EVALSHA-sha1-numkeys-key-key-…-arg-arg-…"><span class="nav-number">4.3.0.2.</span> <span class="nav-text">EVALSHA sha1 numkeys key [key …] arg [arg …]</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结束语"><span class="nav-number">5.</span> <span class="nav-text">结束语</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">守望</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+<div>
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1277113960'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s5.cnzz.com/z_stat.php%3Fid%3D1277113960%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/gitalk/gitalk.css">
+  
+  <script src="/lib/gitalk/gitalk.min.js"></script>
+   <script type="text/javascript">
+		var gitalk = new Gitalk({
+		  clientID: 'ede3b4c45efafd567659',
+		  clientSecret: 'a1b520b96a030165bd3bde65c37121e82e3509b3',
+		  repo: 'BlogComments',
+		  owner: 'yanbinghu',
+		  admin: ['yanbinghu'], 
+		  id: location.pathname,
+		  distractionFreeMode: 'true'
+		})
+		gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("3QkijkMW8MUrMYO01qifxcDz-gzGzoHsz", "M3hmJ4JUXBhFXYgvyExsbFTP");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.3"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.3"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+</body>
+</html>
