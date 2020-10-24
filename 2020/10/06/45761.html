@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="守望的个人博客">
 <meta property="og:description" content="之前在《如何让程序真正地后台运行》一文中提到了程序后台运行的写法，但是里面的示例程序在某些场景下是会有问题的，这里先不说什么问题，我们先看看这个磁盘满的问题是怎么产生的，通过这篇文章你将会学习到大量linux命令的实操使用。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-10-09T14:23:25.786Z">
+<meta property="og:updated_time" content="2020-10-09T14:23:30.178Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="daemon程序实现注意事项">
 <meta name="twitter:description" content="之前在《如何让程序真正地后台运行》一文中提到了程序后台运行的写法，但是里面的示例程序在某些场景下是会有问题的，这里先不说什么问题，我们先看看这个磁盘满的问题是怎么产生的，通过这篇文章你将会学习到大量linux命令的实操使用。">
@@ -148,7 +148,7 @@
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
   ga('create', 'UA-99619048-1', 'auto');
   ga('send', 'pageview');
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 
@@ -156,7 +156,7 @@
 
 <link rel="stylesheet" href="/css/prism-atom-dark.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"><script src="/js/prism.js"></script>
-<script src="/js/prism-line-numbers.min.js"></script></head>
+<script src="/js/prism-line-numbers.min.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
@@ -401,7 +401,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-10-09T22:23:25+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2020-10-09T22:23:30+08:00">
                 2020-10-09
               </time>
             
@@ -471,7 +471,7 @@
         <p>之前在《<a href="https://www.yanbinghu.com/2019/12/06/39731.html">如何让程序真正地后台运行</a>》一文中提到了程序后台运行的写法，但是里面的示例程序在某些场景下是会有问题的，这里先不说什么问题，我们先看看这个磁盘满的问题是怎么产生的，通过这篇文章你将会学习到大量linux命令的实操使用。</p>
 <a id="more"></a>
 <h2 id="找到导致磁盘满的程序"><a href="#找到导致磁盘满的程序" class="headerlink" title="找到导致磁盘满的程序"></a>找到导致磁盘满的程序</h2><p>当发现磁盘占用比较多的时候，可以通过下面的命令，查看各个挂载路径的占用情况：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> df -h</span><br><span class="line">udev            3.9G     0  3.9G    0% /dev</span><br><span class="line">tmpfs           784M  2.0M  782M    1% /run</span><br><span class="line">/dev/sda11       19G  6.5G   12G   37% /</span><br><span class="line">tmpfs           3.9G   91M  3.8G    3% /dev/shm</span><br><span class="line">tmpfs           5.0M  4.0K  5.0M    1% /run/lock</span><br><span class="line">tmpfs           3.9G     0  3.9G    0% /sys/fs/cgroup</span><br><span class="line">/dev/sda12      9.4G   37M  8.8G    1% /tmp</span><br><span class="line">/dev/sda14      6.4G  168M  5.9G    3% /boot</span><br><span class="line">/dev/sda10       57G  2.0G   52G    4% /home</span><br><span class="line">/dev/sda1       256M   33M  224M   13% /boot/efi</span><br><span class="line">tmpfs           784M   16K  784M    1% /run/user/121</span><br><span class="line">tmpfs           784M   44K  784M    1% /run/user/1000</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> df -h</span></span><br><span class="line">udev            3.9G     0  3.9G    0% /dev</span><br><span class="line">tmpfs           784M  2.0M  782M    1% /run</span><br><span class="line">/dev/sda11       19G  6.5G   12G   37% /</span><br><span class="line">tmpfs           3.9G   91M  3.8G    3% /dev/shm</span><br><span class="line">tmpfs           5.0M  4.0K  5.0M    1% /run/lock</span><br><span class="line">tmpfs           3.9G     0  3.9G    0% /sys/fs/cgroup</span><br><span class="line">/dev/sda12      9.4G   37M  8.8G    1% /tmp</span><br><span class="line">/dev/sda14      6.4G  168M  5.9G    3% /boot</span><br><span class="line">/dev/sda10       57G  2.0G   52G    4% /home</span><br><span class="line">/dev/sda1       256M   33M  224M   13% /boot/efi</span><br><span class="line">tmpfs           784M   16K  784M    1% /run/user/121</span><br><span class="line">tmpfs           784M   44K  784M    1% /run/user/1000</span><br></pre></td></tr></table></figure>
 <p>当然我这里并没有哪个挂载路径的磁盘占用率比较高，这里假设home占用比较高，然后可以通过：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cd /home</span><br><span class="line">$ du -h --max-depth=1</span><br><span class="line">1.9G	./shouwang</span><br><span class="line">16K	./lost+found</span><br><span class="line">1.9G	.</span><br></pre></td></tr></table></figure>
 <p>这样可以逐层知道哪些目录有了不该有的大文件。</p>
