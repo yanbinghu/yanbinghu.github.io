@@ -1602,6 +1602,43 @@
       </tags>
   </entry>
   <entry>
+    <title>C++11关键字-auto</title>
+    <url>/2019/11/07/4818.html</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>你以为我说的自动变量类型auto吗？非也，我们知道C语言中其实也有auto关键字，它和早期C++中的auto关键字一样，它修饰局部变量，表示自动存储期（更多内容也可以阅读《<a href="https://www.yanbinghu.com/2019/05/08/43402.html">全局变量，静态全局变量，局部变量，静态局部变量</a>》）不过由于默认就是这种，因此我们其实常常见不到这样的写法：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> <span class="keyword">int</span> a =<span class="number">10</span>;</span><br></pre></td></tr></table></figure></p>
+<p>本文要介绍的并不是上面的auto，而是C++11中引入的auto关键字。<br><a id="more"></a></p>
+<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>看看下面的代码：<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vec&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::const_iterator it = vec.begin();it != vec.end();++it)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;*it&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于it的类型，你自己能快速写出来吗？我反正是写不出来。</p>
+<p>再看auto版本：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;vector&gt;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    std::vector&lt;int&gt; vec&#123;1,2,3,4,5&#125;;</span><br><span class="line">    for(auto it = vec.begin();it != vec.end();++it)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout&lt;&lt;*it&lt;&lt;std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>是不是简洁了许多？</p>
+<p>没错，今天就是介绍自动类型推导关键字auto。</p>
+<h2 id="auto的作用"><a href="#auto的作用" class="headerlink" title="auto的作用"></a>auto的作用</h2><p>说实在的，程序员有时候就是“懒”，可能连个表达式的类型都不想写，auto就是这样一个关键字，它让编译器替我们去分析表达式的类型。</p>
+<p>当然了，分析的前提是auto定义的变量有初值，如果连值都没有，怎么可能知道它是什么类型？</p>
+<h2 id="auto用法"><a href="#auto用法" class="headerlink" title="auto用法"></a>auto用法</h2><h4 id="普通类型推导"><a href="#普通类型推导" class="headerlink" title="普通类型推导"></a>普通类型推导</h4><p>例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">auto i = 10;//i为int类型</span><br><span class="line">auto d = 10.2//d 为double类型</span><br><span class="line">auto f = 10.2f//f为float类型</span><br></pre></td></tr></table></figure></p>
+<h4 id="const关键字修饰的类型推导"><a href="#const关键字修饰的类型推导" class="headerlink" title="const关键字修饰的类型推导"></a>const关键字修饰的类型推导</h4><p>通常auto会忽略掉顶层const（本身是常量，如int *cosnt p），而会保留底层const（指向的对象是常量，如const int* p）。关于const的更多内容可以参考《》<br>举个例子顶层const的例子：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int ci = 10;</span><br><span class="line">auto aci = ci;//忽略顶层const，推导ci是int，所以aci类型是int</span><br><span class="line">const auto ca = ci//推导ci是int，但是前面有const，所以ca是const int</span><br></pre></td></tr></table></figure></p>
+<p>再说一个底层const的例子：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int arr[] = &#123;11&#125;;</span><br><span class="line">auto p = arr;//arr 是const int *,这是底层const，推导后，保留底层const，所以p是 const int*</span><br></pre></td></tr></table></figure></p>
+<p>arr数组名被当成指针是，是const int*类型，或者说是int const*，它指向的对象是只读的，因此是底层const，保留，最终p的类型也是int const *。</p>
+<p>当然auto还可以设置引用类型，例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int ci = 10;</span><br><span class="line">auto &amp;cp = ci;//cp是一个整型常量引</span><br></pre></td></tr></table></figure></p>
+<p>如果是字面值，则必须加上const：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const auto &amp;ref = 10;//10是字面值，常量引用才能绑定字面值</span><br></pre></td></tr></table></figure></p>
+<h2 id="想一想"><a href="#想一想" class="headerlink" title="想一想"></a>想一想</h2><p>想想下面推导的size类型是什么？<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">std::vector&lt;int&gt; vec;</span><br><span class="line">auto size = vec.size();</span><br></pre></td></tr></table></figure></p>
+<p>没错，它是std::vector<int>::size_type。<br>要你写下来你肯定不愿意。</int></p>
+<p>下面这段程序帮你查看真正类型的名称，<strong>仅供参考</strong>：<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cxxabi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;typeinfo&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span>     status;</span><br><span class="line">    <span class="keyword">char</span>   *realname;</span><br><span class="line">    <span class="keyword">auto</span> type = <span class="number">1.1</span>;</span><br><span class="line">    realname = abi::__cxa_demangle(<span class="keyword">typeid</span>(type).name(), <span class="number">0</span>, <span class="number">0</span>, &amp;status);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="keyword">typeid</span>(type).name() &lt;&lt; <span class="string">" =&gt; "</span> &lt;&lt; realname &lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">free</span>(realname);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出结果：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">double</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>乍一看，好像挺简单的那么一回事，不过使用auto最好注意类型推导规则，不是很明确的规则不建议以代码可读性为代价而简化代码。</p>
+<p>当然了，它也有以下特点：</p>
+<ul>
+<li>可能使得代码可读性差</li>
+<li>某些情况auto得到的类型可能不是你想要的</li>
+</ul>
+<p>因此一定要合理使用。</p>
+]]></content>
+      <categories>
+        <category>Cpp</category>
+      </categories>
+      <tags>
+        <tag>Cpp</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C++11-unique_ptr详解</title>
     <url>/2019/11/07/11278.html</url>
     <content><![CDATA[<p>在《<a href="https://www.yanbinghu.com/2019/11/05/17350.html">拥抱智能指针，告别内存泄露</a>》中说到了内存泄漏问题，也提到了C++中的智能指针基本原理，今天就来说说类模板unique_ptr。<br>在此之前，先回答读者的一个提问：C语言中该怎么办？有几点建议：</p>
@@ -1655,43 +1692,6 @@
 <p>第二点为何这么说？因为相比于shared_ptr，它的开销更小，甚至可以说和裸指针相当，它不需要维护引用计数的原子操作等等。</p>
 <p>所以说，如果有可能，优先选用unique_ptr。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了unique<em>ptr的基本使用情况和使用场景，它能够有效地避免内存泄露并且效率可控，因此如果能够满足需求，则优先选择unique</em>\ptr。</p>
-]]></content>
-      <categories>
-        <category>Cpp</category>
-      </categories>
-      <tags>
-        <tag>Cpp</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>C++11关键字-auto</title>
-    <url>/2019/11/07/4818.html</url>
-    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>你以为我说的自动变量类型auto吗？非也，我们知道C语言中其实也有auto关键字，它和早期C++中的auto关键字一样，它修饰局部变量，表示自动存储期（更多内容也可以阅读《<a href="https://www.yanbinghu.com/2019/05/08/43402.html">全局变量，静态全局变量，局部变量，静态局部变量</a>》）不过由于默认就是这种，因此我们其实常常见不到这样的写法：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> <span class="keyword">int</span> a =<span class="number">10</span>;</span><br></pre></td></tr></table></figure></p>
-<p>本文要介绍的并不是上面的auto，而是C++11中引入的auto关键字。<br><a id="more"></a></p>
-<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>看看下面的代码：<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vec&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::const_iterator it = vec.begin();it != vec.end();++it)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;*it&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>对于it的类型，你自己能快速写出来吗？我反正是写不出来。</p>
-<p>再看auto版本：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;vector&gt;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    std::vector&lt;int&gt; vec&#123;1,2,3,4,5&#125;;</span><br><span class="line">    for(auto it = vec.begin();it != vec.end();++it)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout&lt;&lt;*it&lt;&lt;std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>是不是简洁了许多？</p>
-<p>没错，今天就是介绍自动类型推导关键字auto。</p>
-<h2 id="auto的作用"><a href="#auto的作用" class="headerlink" title="auto的作用"></a>auto的作用</h2><p>说实在的，程序员有时候就是“懒”，可能连个表达式的类型都不想写，auto就是这样一个关键字，它让编译器替我们去分析表达式的类型。</p>
-<p>当然了，分析的前提是auto定义的变量有初值，如果连值都没有，怎么可能知道它是什么类型？</p>
-<h2 id="auto用法"><a href="#auto用法" class="headerlink" title="auto用法"></a>auto用法</h2><h4 id="普通类型推导"><a href="#普通类型推导" class="headerlink" title="普通类型推导"></a>普通类型推导</h4><p>例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">auto i = 10;//i为int类型</span><br><span class="line">auto d = 10.2//d 为double类型</span><br><span class="line">auto f = 10.2f//f为float类型</span><br></pre></td></tr></table></figure></p>
-<h4 id="const关键字修饰的类型推导"><a href="#const关键字修饰的类型推导" class="headerlink" title="const关键字修饰的类型推导"></a>const关键字修饰的类型推导</h4><p>通常auto会忽略掉顶层const（本身是常量，如int *cosnt p），而会保留底层const（指向的对象是常量，如const int* p）。关于const的更多内容可以参考《》<br>举个例子顶层const的例子：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int ci = 10;</span><br><span class="line">auto aci = ci;//忽略顶层const，推导ci是int，所以aci类型是int</span><br><span class="line">const auto ca = ci//推导ci是int，但是前面有const，所以ca是const int</span><br></pre></td></tr></table></figure></p>
-<p>再说一个底层const的例子：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int arr[] = &#123;11&#125;;</span><br><span class="line">auto p = arr;//arr 是const int *,这是底层const，推导后，保留底层const，所以p是 const int*</span><br></pre></td></tr></table></figure></p>
-<p>arr数组名被当成指针是，是const int*类型，或者说是int const*，它指向的对象是只读的，因此是底层const，保留，最终p的类型也是int const *。</p>
-<p>当然auto还可以设置引用类型，例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int ci = 10;</span><br><span class="line">auto &amp;cp = ci;//cp是一个整型常量引</span><br></pre></td></tr></table></figure></p>
-<p>如果是字面值，则必须加上const：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const auto &amp;ref = 10;//10是字面值，常量引用才能绑定字面值</span><br></pre></td></tr></table></figure></p>
-<h2 id="想一想"><a href="#想一想" class="headerlink" title="想一想"></a>想一想</h2><p>想想下面推导的size类型是什么？<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">std::vector&lt;int&gt; vec;</span><br><span class="line">auto size = vec.size();</span><br></pre></td></tr></table></figure></p>
-<p>没错，它是std::vector<int>::size_type。<br>要你写下来你肯定不愿意。</int></p>
-<p>下面这段程序帮你查看真正类型的名称，<strong>仅供参考</strong>：<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cxxabi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;typeinfo&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span>     status;</span><br><span class="line">    <span class="keyword">char</span>   *realname;</span><br><span class="line">    <span class="keyword">auto</span> type = <span class="number">1.1</span>;</span><br><span class="line">    realname = abi::__cxa_demangle(<span class="keyword">typeid</span>(type).name(), <span class="number">0</span>, <span class="number">0</span>, &amp;status);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="keyword">typeid</span>(type).name() &lt;&lt; <span class="string">" =&gt; "</span> &lt;&lt; realname &lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">free</span>(realname);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>输出结果：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">double</span><br></pre></td></tr></table></figure></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>乍一看，好像挺简单的那么一回事，不过使用auto最好注意类型推导规则，不是很明确的规则不建议以代码可读性为代价而简化代码。</p>
-<p>当然了，它也有以下特点：</p>
-<ul>
-<li>可能使得代码可读性差</li>
-<li>某些情况auto得到的类型可能不是你想要的</li>
-</ul>
-<p>因此一定要合理使用。</p>
 ]]></content>
       <categories>
         <category>Cpp</category>
