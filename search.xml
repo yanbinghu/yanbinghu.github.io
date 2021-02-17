@@ -310,6 +310,47 @@
       </tags>
   </entry>
   <entry>
+    <title>什么是强符号和弱符号？</title>
+    <url>/2021/02/17/26301.html</url>
+    <content><![CDATA[<p>C/C++中的符号是什么？什么是强符号？什么又是弱符号？<br><a id="more"></a><br>先问一个问题，如果全局变量或者函数重复定义了，会发生什么？</p>
+<p>可能有些朋友第一反应是，那肯定是编译不过喽：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 来源：公众号【编程珠玑】</span></span><br><span class="line"><span class="comment">// 作者：守望先生</span></span><br><span class="line"><span class="comment">// fun.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"编程珠玑\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// main.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"公众号\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    func();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编译：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ gcc -o main main.c fun.c</span><br><span class="line">/tmp/ccKeACRk.o: In function `fun&apos;:</span><br><span class="line">fun.c:(.text+0x0): multiple definition of `fun&apos;</span><br><span class="line">/tmp/cc4ezgqh.o:main.c:(.text+0x0): first defined here</span><br><span class="line">collect2: error: ld returned 1 exit status</span><br></pre></td></tr></table></figure></p>
+<p>可以看到这里报错了，因为fun重复定义了。</p>
+<p>但是重复定义就会报错，会编译不过吗？不全是！</p>
+<p>再看下面的代码：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 来源：公众号【编程珠玑】</span></span><br><span class="line"><span class="comment">// 作者：守望先生</span></span><br><span class="line"><span class="comment">//var.c</span></span><br><span class="line"><span class="keyword">int</span> num;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">change</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    num = <span class="number">1023</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//main.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">change</span><span class="params">()</span></span>;</span><br><span class="line"><span class="keyword">int</span> num = <span class="number">1024</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"before:num is %d\n"</span>, num);</span><br><span class="line">    change();</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"after:num is %d\n"</span>, num);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出结果：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">before:num is 1024 </span><br><span class="line">after:num is 1023</span><br></pre></td></tr></table></figure></p>
+<p>从结果中可以看到，虽然num被定义了两次，但是仍然可以编译通过，并且正常运行。这又是为什么呢？</p>
+<h2 id="符号"><a href="#符号" class="headerlink" title="符号"></a>符号</h2><p>在说明今天重点分享的内容之前，先简单了解一下什么是符号。在《<a href="https://www.yanbinghu.com/2018/10/10/27133.html">hello程序是如何变成可执行文件的</a>》中讲到过，ELF文件生成的最后阶段会经历链接，而链接阶段正是基于符号才能完成。每个目标文件都会有一个符号表。而链接过程正是通过符号表中的符号，将不同的目标文件“粘”在一起，形成最后的库或者可执行文件。要查看一个目标文件的符号信息也很容易：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// symbol.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">int</span> symbol = <span class="number">1024</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func_symbol</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编译：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ gcc smbol.c #编译</span><br><span class="line">$ nm symbol.o #查看符号信息</span><br><span class="line">0000000000000000 T func_symbol</span><br><span class="line">0000000000000000 D symbol</span><br></pre></td></tr></table></figure></p>
+<p>通过nm命令就可以查看符号信息，这里就有我们的func_symbol函数和全局变量symbol的符号。<br>关于nm的使用，在《<a href="https://www.yanbinghu.com/2019/10/13/54745.html">几个命令了解ELF文件的秘密</a>》也有介绍。<br>除了上面提到的全局符号，目标文件中还有其他符号信息，不过这不是本文关注的重点。</p>
+<h2 id="强符号与弱符号"><a href="#强符号与弱符号" class="headerlink" title="强符号与弱符号"></a>强符号与弱符号</h2><p>对于C/C++语言来说，<font color="red"><strong>编译器默认函数和初始化了的全局变量为强符号，未初始化的全局变量为弱符号</strong></font>。当然也可以通过<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">__attribute__((weak))</span><br></pre></td></tr></table></figure></p>
+<p>来定义一个强符号为弱符号。</p>
+<p>通过下面的例子来看看哪些是强符号，哪些是弱符号：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">int</span> weak; <span class="comment">// 未初始化全局变量，弱符号</span></span><br><span class="line"><span class="keyword">int</span> strong = <span class="number">1024</span>; <span class="comment">// 已初始化全局变量，强符号</span></span><br><span class="line">__attribute__((weak)) <span class="keyword">int</span> weak1 = <span class="number">2222</span>; <span class="comment">// 使用标识修饰的弱符号</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"编程珠玑\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>注意，<font color="red">这里的强符号与弱符号都是针对定义来说的。</font></p>
+<h2 id="同名时，用哪个？"><a href="#同名时，用哪个？" class="headerlink" title="同名时，用哪个？"></a>同名时，用哪个？</h2><p>对于多重定义，即标题提到的变量重名时，链接器有它的处理规则：</p>
+<ul>
+<li>1.强符号不允许重复</li>
+<li>2.有一个强符号和多个弱符号，使用强符号</li>
+<li>3.多个弱符号，则随意选择一个</li>
+</ul>
+<p>关于第一点，在最开始的例子中你已经见到了，最常见的情况就是你重复定义了变量或者函数等等。</p>
+<p>而第二点也有示例，示例中，虽然定义了两个num，但是var.c中未初始化的num是弱符号，main.c中的num是强符号，这种情况下编译正常。只是最终会使用强符号的num。</p>
+<p>再看一个第三点的例子也是类似，当其中main.c的num无初始化时，也是可以编译过的。这种情况下的误用也就罢了，如果是重复的符号，但是类型不同，问题就更大了，即var.c的内容如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">//var.c</span><br><span class="line">double num;</span><br><span class="line">void change()</span><br><span class="line">&#123;</span><br><span class="line">    num = 1023;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里的num变成了double，再次编译运行，你会发现意想不到的结果：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">before:num is <span class="number">1024</span> </span><br><span class="line">after:num is <span class="number">0</span></span><br></pre></td></tr></table></figure></p>
+<p>为什么修改后是0？原因在于double类型的数据存储与int类型数据存储格式不一样（参考《<a href="https://www.yanbinghu.com/2018/09/05/65196.html">对浮点数的一些理解</a>》），且它们占用空间长度都不一样，在本文例子中，double占用8字节，而int占用4字节。</p>
+<p>总之，这不是我们想要的结果，最终的后果可能比我们想象的要严重，要更难发现。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>如非特殊需求，应该尽量避免出现全局变量同名，以免造成意料不到的结果，例如使用变量时最小范围定义，即尽可能避免全局变量，或者使用命名空间（如C++）。</p>
+<p>当然了，强弱符号在某些时候是非常有用的，例如制作库以支持用户自定义的库，这又该怎么做呢？敬请期待下一篇。</p>
+]]></content>
+      <categories>
+        <category>编译链接</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
+        <tag>链接</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C语言泛型编程</title>
     <url>/2020/12/27/17582.html</url>
     <content><![CDATA[<p>泛型编程（generic programming）是程序设计语言的一种风格或范式。泛型允许程序员在强类型程序设计语言中编写代码时使用一些以后才指定的类型，在实例化时作为参数指明这些类型。<br><a id="more"></a><br>C++支持泛型编程，也就是模板，比如：<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 来源：公众号【 编程珠玑】</span></span><br><span class="line"><span class="comment">// 作者：守望先生</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">T</span> <span class="title">add</span>(<span class="title">T</span> <span class="title">a</span>,<span class="title">T</span> <span class="title">b</span>)&#123;</span></span><br><span class="line">  T ret = a + b;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt; a &lt;&lt; <span class="string">" + "</span> &lt;&lt; b &lt;&lt;<span class="string">" = "</span> &lt;&lt; ret &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  add(<span class="number">1</span>,<span class="number">2</span>);  <span class="comment">// 整数相加</span></span><br><span class="line">  add(<span class="number">1.2</span>,<span class="number">2.3</span>); <span class="comment">// 浮点数相加</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -750,7 +791,7 @@
 <p>对于一个复杂的项目而言，makefile还有很多东西可介绍，例如如何设置变量，如何交叉编译，如何多个目录编译，如何自动推导，如何分支选择等等。这些都是后话了。</p>
 ]]></content>
       <categories>
-        <category>C</category>
+        <category>编译链接</category>
       </categories>
       <tags>
         <tag>C</tag>
@@ -1849,43 +1890,6 @@
       </tags>
   </entry>
   <entry>
-    <title>C++11关键字-auto</title>
-    <url>/2019/11/07/4818.html</url>
-    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>你以为我说的自动变量类型auto吗？非也，我们知道C语言中其实也有auto关键字，它和早期C++中的auto关键字一样，它修饰局部变量，表示自动存储期（更多内容也可以阅读《<a href="https://www.yanbinghu.com/2019/05/08/43402.html">全局变量，静态全局变量，局部变量，静态局部变量</a>》）不过由于默认就是这种，因此我们其实常常见不到这样的写法：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> <span class="keyword">int</span> a =<span class="number">10</span>;</span><br></pre></td></tr></table></figure></p>
-<p>本文要介绍的并不是上面的auto，而是C++11中引入的auto关键字。<br><a id="more"></a></p>
-<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>看看下面的代码：<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vec&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::const_iterator it = vec.begin();it != vec.end();++it)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;*it&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>对于it的类型，你自己能快速写出来吗？我反正是写不出来。</p>
-<p>再看auto版本：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;vector&gt;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    std::vector&lt;int&gt; vec&#123;1,2,3,4,5&#125;;</span><br><span class="line">    for(auto it = vec.begin();it != vec.end();++it)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout&lt;&lt;*it&lt;&lt;std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>是不是简洁了许多？</p>
-<p>没错，今天就是介绍自动类型推导关键字auto。</p>
-<h2 id="auto的作用"><a href="#auto的作用" class="headerlink" title="auto的作用"></a>auto的作用</h2><p>说实在的，程序员有时候就是“懒”，可能连个表达式的类型都不想写，auto就是这样一个关键字，它让编译器替我们去分析表达式的类型。</p>
-<p>当然了，分析的前提是auto定义的变量有初值，如果连值都没有，怎么可能知道它是什么类型？</p>
-<h2 id="auto用法"><a href="#auto用法" class="headerlink" title="auto用法"></a>auto用法</h2><h4 id="普通类型推导"><a href="#普通类型推导" class="headerlink" title="普通类型推导"></a>普通类型推导</h4><p>例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">auto i = 10;//i为int类型</span><br><span class="line">auto d = 10.2//d 为double类型</span><br><span class="line">auto f = 10.2f//f为float类型</span><br></pre></td></tr></table></figure></p>
-<h4 id="const关键字修饰的类型推导"><a href="#const关键字修饰的类型推导" class="headerlink" title="const关键字修饰的类型推导"></a>const关键字修饰的类型推导</h4><p>通常auto会忽略掉顶层const（本身是常量，如int *cosnt p），而会保留底层const（指向的对象是常量，如const int* p）。关于const的更多内容可以参考《》<br>举个例子顶层const的例子：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int ci = 10;</span><br><span class="line">auto aci = ci;//忽略顶层const，推导ci是int，所以aci类型是int</span><br><span class="line">const auto ca = ci//推导ci是int，但是前面有const，所以ca是const int</span><br></pre></td></tr></table></figure></p>
-<p>再说一个底层const的例子：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int arr[] = &#123;11&#125;;</span><br><span class="line">auto p = arr;//arr 是const int *,这是底层const，推导后，保留底层const，所以p是 const int*</span><br></pre></td></tr></table></figure></p>
-<p>arr数组名被当成指针是，是const int*类型，或者说是int const*，它指向的对象是只读的，因此是底层const，保留，最终p的类型也是int const *。</p>
-<p>当然auto还可以设置引用类型，例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int ci = 10;</span><br><span class="line">auto &amp;cp = ci;//cp是一个整型常量引</span><br></pre></td></tr></table></figure></p>
-<p>如果是字面值，则必须加上const：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const auto &amp;ref = 10;//10是字面值，常量引用才能绑定字面值</span><br></pre></td></tr></table></figure></p>
-<h2 id="想一想"><a href="#想一想" class="headerlink" title="想一想"></a>想一想</h2><p>想想下面推导的size类型是什么？<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">std::vector&lt;int&gt; vec;</span><br><span class="line">auto size = vec.size();</span><br></pre></td></tr></table></figure></p>
-<p>没错，它是std::vector<int>::size_type。<br>要你写下来你肯定不愿意。</int></p>
-<p>下面这段程序帮你查看真正类型的名称，<strong>仅供参考</strong>：<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cxxabi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;typeinfo&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span>     status;</span><br><span class="line">    <span class="keyword">char</span>   *realname;</span><br><span class="line">    <span class="keyword">auto</span> type = <span class="number">1.1</span>;</span><br><span class="line">    realname = abi::__cxa_demangle(<span class="keyword">typeid</span>(type).name(), <span class="number">0</span>, <span class="number">0</span>, &amp;status);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="keyword">typeid</span>(type).name() &lt;&lt; <span class="string">" =&gt; "</span> &lt;&lt; realname &lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">free</span>(realname);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>输出结果：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">double</span><br></pre></td></tr></table></figure></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>乍一看，好像挺简单的那么一回事，不过使用auto最好注意类型推导规则，不是很明确的规则不建议以代码可读性为代价而简化代码。</p>
-<p>当然了，它也有以下特点：</p>
-<ul>
-<li>可能使得代码可读性差</li>
-<li>某些情况auto得到的类型可能不是你想要的</li>
-</ul>
-<p>因此一定要合理使用。</p>
-]]></content>
-      <categories>
-        <category>Cpp</category>
-      </categories>
-      <tags>
-        <tag>Cpp</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>C++11-unique_ptr详解</title>
     <url>/2019/11/07/11278.html</url>
     <content><![CDATA[<p>在《<a href="https://www.yanbinghu.com/2019/11/05/17350.html">拥抱智能指针，告别内存泄露</a>》中说到了内存泄漏问题，也提到了C++中的智能指针基本原理，今天就来说说类模板unique_ptr。<br>在此之前，先回答读者的一个提问：C语言中该怎么办？有几点建议：</p>
@@ -1939,6 +1943,43 @@
 <p>第二点为何这么说？因为相比于shared_ptr，它的开销更小，甚至可以说和裸指针相当，它不需要维护引用计数的原子操作等等。</p>
 <p>所以说，如果有可能，优先选用unique_ptr。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了unique<em>ptr的基本使用情况和使用场景，它能够有效地避免内存泄露并且效率可控，因此如果能够满足需求，则优先选择unique</em>\ptr。</p>
+]]></content>
+      <categories>
+        <category>Cpp</category>
+      </categories>
+      <tags>
+        <tag>Cpp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>C++11关键字-auto</title>
+    <url>/2019/11/07/4818.html</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>你以为我说的自动变量类型auto吗？非也，我们知道C语言中其实也有auto关键字，它和早期C++中的auto关键字一样，它修饰局部变量，表示自动存储期（更多内容也可以阅读《<a href="https://www.yanbinghu.com/2019/05/08/43402.html">全局变量，静态全局变量，局部变量，静态局部变量</a>》）不过由于默认就是这种，因此我们其实常常见不到这样的写法：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> <span class="keyword">int</span> a =<span class="number">10</span>;</span><br></pre></td></tr></table></figure></p>
+<p>本文要介绍的并不是上面的auto，而是C++11中引入的auto关键字。<br><a id="more"></a></p>
+<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>看看下面的代码：<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vec&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::const_iterator it = vec.begin();it != vec.end();++it)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;*it&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于it的类型，你自己能快速写出来吗？我反正是写不出来。</p>
+<p>再看auto版本：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;vector&gt;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    std::vector&lt;int&gt; vec&#123;1,2,3,4,5&#125;;</span><br><span class="line">    for(auto it = vec.begin();it != vec.end();++it)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout&lt;&lt;*it&lt;&lt;std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>是不是简洁了许多？</p>
+<p>没错，今天就是介绍自动类型推导关键字auto。</p>
+<h2 id="auto的作用"><a href="#auto的作用" class="headerlink" title="auto的作用"></a>auto的作用</h2><p>说实在的，程序员有时候就是“懒”，可能连个表达式的类型都不想写，auto就是这样一个关键字，它让编译器替我们去分析表达式的类型。</p>
+<p>当然了，分析的前提是auto定义的变量有初值，如果连值都没有，怎么可能知道它是什么类型？</p>
+<h2 id="auto用法"><a href="#auto用法" class="headerlink" title="auto用法"></a>auto用法</h2><h4 id="普通类型推导"><a href="#普通类型推导" class="headerlink" title="普通类型推导"></a>普通类型推导</h4><p>例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">auto i = 10;//i为int类型</span><br><span class="line">auto d = 10.2//d 为double类型</span><br><span class="line">auto f = 10.2f//f为float类型</span><br></pre></td></tr></table></figure></p>
+<h4 id="const关键字修饰的类型推导"><a href="#const关键字修饰的类型推导" class="headerlink" title="const关键字修饰的类型推导"></a>const关键字修饰的类型推导</h4><p>通常auto会忽略掉顶层const（本身是常量，如int *cosnt p），而会保留底层const（指向的对象是常量，如const int* p）。关于const的更多内容可以参考《》<br>举个例子顶层const的例子：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int ci = 10;</span><br><span class="line">auto aci = ci;//忽略顶层const，推导ci是int，所以aci类型是int</span><br><span class="line">const auto ca = ci//推导ci是int，但是前面有const，所以ca是const int</span><br></pre></td></tr></table></figure></p>
+<p>再说一个底层const的例子：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int arr[] = &#123;11&#125;;</span><br><span class="line">auto p = arr;//arr 是const int *,这是底层const，推导后，保留底层const，所以p是 const int*</span><br></pre></td></tr></table></figure></p>
+<p>arr数组名被当成指针是，是const int*类型，或者说是int const*，它指向的对象是只读的，因此是底层const，保留，最终p的类型也是int const *。</p>
+<p>当然auto还可以设置引用类型，例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const int ci = 10;</span><br><span class="line">auto &amp;cp = ci;//cp是一个整型常量引</span><br></pre></td></tr></table></figure></p>
+<p>如果是字面值，则必须加上const：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const auto &amp;ref = 10;//10是字面值，常量引用才能绑定字面值</span><br></pre></td></tr></table></figure></p>
+<h2 id="想一想"><a href="#想一想" class="headerlink" title="想一想"></a>想一想</h2><p>想想下面推导的size类型是什么？<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">std::vector&lt;int&gt; vec;</span><br><span class="line">auto size = vec.size();</span><br></pre></td></tr></table></figure></p>
+<p>没错，它是std::vector<int>::size_type。<br>要你写下来你肯定不愿意。</int></p>
+<p>下面这段程序帮你查看真正类型的名称，<strong>仅供参考</strong>：<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cxxabi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;typeinfo&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span>     status;</span><br><span class="line">    <span class="keyword">char</span>   *realname;</span><br><span class="line">    <span class="keyword">auto</span> type = <span class="number">1.1</span>;</span><br><span class="line">    realname = abi::__cxa_demangle(<span class="keyword">typeid</span>(type).name(), <span class="number">0</span>, <span class="number">0</span>, &amp;status);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="keyword">typeid</span>(type).name() &lt;&lt; <span class="string">" =&gt; "</span> &lt;&lt; realname &lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">free</span>(realname);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出结果：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">double</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>乍一看，好像挺简单的那么一回事，不过使用auto最好注意类型推导规则，不是很明确的规则不建议以代码可读性为代价而简化代码。</p>
+<p>当然了，它也有以下特点：</p>
+<ul>
+<li>可能使得代码可读性差</li>
+<li>某些情况auto得到的类型可能不是你想要的</li>
+</ul>
+<p>因此一定要合理使用。</p>
 ]]></content>
       <categories>
         <category>Cpp</category>
@@ -3175,7 +3216,7 @@
 </ul>
 ]]></content>
       <categories>
-        <category>C</category>
+        <category>编译链接</category>
       </categories>
       <tags>
         <tag>C</tag>
@@ -3703,7 +3744,7 @@
 <p>由于普通用户只能绑定使用1024以外的端口，因此当普通用户试图使用1024以内的端口时，就会提示Permission denied。</p>
 <p>Permission denied的情况有很多种，这里只列举了其中一种。</p>
 <h2 id="Bad-file-descriptor"><a href="#Bad-file-descriptor" class="headerlink" title="Bad file descriptor"></a>Bad file descriptor</h2><p>这种错误在很多场景下会出现，因为我们在很多地方都用到了套接字描述符，因此一旦套接字描述符相关参数错误，都会出现这种错误，例如我们将bind的第一个参数随便指定一个值，并运行server：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ./server</span><br><span class="line">bind error: Bad file descriptor</span><br></pre></td></tr></table></figure></p>
-<h2 id="Connection-refused"><a href="#Connection-refused" class="headerlink" title="Connection refused"></a>Connection refused</h2><p>这个错误常常出现于连接到一个未监听的地址，例如：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./client 127.0.0.1 8888</span></span><br><span class="line">connect failed: Connection refused</span><br></pre></td></tr></table></figure></p>
+<h2 id="Connection-refused"><a href="#Connection-refused" class="headerlink" title="Connection refused"></a>Connection refused</h2><p>这个错误常常出现于连接到一个未监听的地址，例如：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span> ./client 127.0.0.1 8888</span><br><span class="line">connect failed: Connection refused</span><br></pre></td></tr></table></figure></p>
 <p>这种情况下表明TCP连接的过程中收到了RST响应，有可能是8888端口没有监听，也可能是别的原因导致连接取消。</p>
 <h2 id="Connection-timed-out"><a href="#Connection-timed-out" class="headerlink" title="Connection timed out"></a>Connection timed out</h2><p>这个错误常常是由于远端服务器过于繁忙，没有accept。这个我们已经在TCP连接的建立一文中有说明，一旦服务端的连接队列满，将不会处理新的连接请求，客户端将会超时。</p>
 <p>当然除此之外，如果指定连接到一个不存在的IP地址：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ./client 192.168.183.5 8888</span><br><span class="line">connect failed: Connection timed out</span><br></pre></td></tr></table></figure></p>
@@ -3786,7 +3827,7 @@
 </ul>
 ]]></content>
       <categories>
-        <category>C</category>
+        <category>编译链接</category>
       </categories>
       <tags>
         <tag>C</tag>
@@ -3816,8 +3857,8 @@
 <li>客户端收到后，也回复ACK响应，最终关闭连接</li>
 </ul>
 <p>因而整个过程需要四次挥手。</p>
-<h2 id="为什么要TIME-WAIT状态"><a href="#为什么要TIME-WAIT状态" class="headerlink" title="为什么要TIME_WAIT状态"></a>为什么要TIME_WAIT状态</h2><p>TIME_WAIT也称为2MSL等待时间。MSL为报文最大生存时间，它是任何报文在被丢弃前存在于网络内的最长时间。这个时间在不同类型的系统中可能有所不同，但这不是关键。在我个人的机器上，可以借助netstat命令和nc命令通过下面的方式观察到。在终端1监听1234端口：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> nc -l 1234</span></span><br></pre></td></tr></table></figure></p>
-<p>在终端2连接到1234端口：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> nc 127.0.0.1 1234</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="为什么要TIME-WAIT状态"><a href="#为什么要TIME-WAIT状态" class="headerlink" title="为什么要TIME_WAIT状态"></a>为什么要TIME_WAIT状态</h2><p>TIME_WAIT也称为2MSL等待时间。MSL为报文最大生存时间，它是任何报文在被丢弃前存在于网络内的最长时间。这个时间在不同类型的系统中可能有所不同，但这不是关键。在我个人的机器上，可以借助netstat命令和nc命令通过下面的方式观察到。在终端1监听1234端口：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span> nc -l 1234</span><br></pre></td></tr></table></figure></p>
+<p>在终端2连接到1234端口：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span> nc 127.0.0.1 1234</span><br></pre></td></tr></table></figure></p>
 <p>在终端3通过netstat命令观察：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ netstat -anpoc|grep :1234</span><br></pre></td></tr></table></figure></p>
 <p>然后在终端1按ctrl+c，终止连接，立刻观察终端3的结果，我们发现：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tcp        0      0 127.0.0.1:1234          127.0.0.1:33524         TIME_WAIT   -                timewait (59.76/0/0)</span><br><span class="line">tcp        0      0 127.0.0.1:1234          127.0.0.1:33524         TIME_WAIT   -                timewait (58.74/0/0)</span><br><span class="line">tcp        0      0 127.0.0.1:1234          127.0.0.1:33524         TIME_WAIT   -                timewait (57.71/0/0)</span><br><span class="line">tcp        0      0 127.0.0.1:1234          127.0.0.1:33524         TIME_WAIT   -                timewait (56.69/0/0)</span><br></pre></td></tr></table></figure></p>
 <p>我们可以观察到，服务端当前处于TIME_WAIT，且有一个timewait的定时器，为1分钟。</p>
@@ -3831,7 +3872,7 @@
 <p>这里需要注意，<strong>最终执行主动关闭的那一端会处于TIME_WAIT状态</strong>。</p>
 <p><strong>那么为什么又说是为了避免收到老的重复报文呢？</strong></p>
 <p>试想这样的场景：<br>假设一开始已经有一个连接在1234端口建立，我们关闭这个连接；过一会我们在同样的ip和端口建立连接，但是TCP必须防止在前一次连接中的老的报文在它原先的连接已终止后，还出现在这个新的连接中，因此，TCP将不允许在处于TIME_WAIT状态的ip和端口处建立新的连接。而2MSL时间过后，老的报文早已在网络中消失了，也就避免了这种情况的发生。</p>
-<p>这种情况可以很容易通过《<a href="https://www.yanbinghu.com/2019/07/07/40135.html">网络编程-一个简单的echo程序</a>》的server程序来观察：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./server  <span class="comment">#在一个终端启动server，</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ./client 127.0.0.1 1234 <span class="comment">#在另一个终端启动client</span></span></span><br></pre></td></tr></table></figure></p>
+<p>这种情况可以很容易通过《<a href="https://www.yanbinghu.com/2019/07/07/40135.html">网络编程-一个简单的echo程序</a>》的server程序来观察：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span> ./server  #在一个终端启动server，</span><br><span class="line"><span class="meta">$</span> ./client 127.0.0.1 1234 #在另一个终端启动client</span><br></pre></td></tr></table></figure></p>
 <p>在服务端终端ctrl+c终止服务端，然后再次启动server：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ./server</span><br><span class="line">bind error: Address already in use</span><br><span class="line">$ netstat -anop|grep :1234</span><br><span class="line">tcp        1      0 127.0.0.1:33722         127.0.0.1:1234          CLOSE_WAIT  11691/client     off (0.00/0/0)</span><br><span class="line">tcp        0      0 127.0.0.1:1234          127.0.0.1:33722         FIN_WAIT2   -                timewait (57.92/0/0)</span><br></pre></td></tr></table></figure></p>
 <p>终止服务端后，服务端处于TIME_WAIT状态，此时再次启动server，将不能使用原来的ip和端口建立连接，因此出现Address already in use的报错。</p>
 <p>但是需要注意：</p>
@@ -4231,7 +4272,7 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>制作静态库不过是利用ar命令把一些文件可重定位文件打包在一起，其他程序在使用时需要通过链接动态将自己需要的内容“拷贝”到最终的可执行文件中。现在知道如何制作属于自己的静态库了吗？赶紧自己试试吧！</p>
 ]]></content>
       <categories>
-        <category>C</category>
+        <category>编译链接</category>
       </categories>
       <tags>
         <tag>C</tag>
@@ -4304,7 +4345,7 @@
 </ul>
 <p>通常来说，一种传输协议只支持一种套接字，此时protocol可以为0，系统会选择其对应的协议类型；否则的话，需要指定protocol的值。在当前echo程序中，type为SOCK_STREAM，我们的protocol值为0，因此使用的就是TCP协议。</p>
 <p>我们通过一个简单的例子，观察这个套接字描述符：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//testSocket.c</span></span><br><span class="line"><span class="comment">//来源：公众号【编程珠玑】网站：https://www.yanbinghu.com</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> socktfd = socket(AF_INET,SOCK_STREAM,<span class="number">0</span>);</span><br><span class="line">    sleep(<span class="number">20</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>在一个终端运行testSocket，在另外一个终端找到该程序的pid，并查看打开的文件描述符：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pidof testSocket</span></span><br><span class="line">5903</span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -l /proc/5903/fd/</span></span><br><span class="line">total 0</span><br><span class="line">lrwx------ 1 hyb hyb 64 7月   8 19:59 0 -&gt; /dev/pts/6</span><br><span class="line">lrwx------ 1 hyb hyb 64 7月   8 19:59 1 -&gt; /dev/pts/6</span><br><span class="line">lrwx------ 1 hyb hyb 64 7月   8 19:59 2 -&gt; /dev/pts/6</span><br><span class="line">lrwx------ 1 hyb hyb 64 7月   8 19:59 3 -&gt; socket:[62182]</span><br></pre></td></tr></table></figure></p>
+<p>在一个终端运行testSocket，在另外一个终端找到该程序的pid，并查看打开的文件描述符：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span> pidof testSocket</span><br><span class="line">5903</span><br><span class="line"><span class="meta">$</span> ls -l /proc/5903/fd/</span><br><span class="line">total 0</span><br><span class="line">lrwx------ 1 hyb hyb 64 7月   8 19:59 0 -&gt; /dev/pts/6</span><br><span class="line">lrwx------ 1 hyb hyb 64 7月   8 19:59 1 -&gt; /dev/pts/6</span><br><span class="line">lrwx------ 1 hyb hyb 64 7月   8 19:59 2 -&gt; /dev/pts/6</span><br><span class="line">lrwx------ 1 hyb hyb 64 7月   8 19:59 3 -&gt; socket:[62182]</span><br></pre></td></tr></table></figure></p>
 <p>还记得那句话吗：linux下一切皆文件。</p>
 <h2 id="bind—指定套接字地址信息"><a href="#bind—指定套接字地址信息" class="headerlink" title="bind—指定套接字地址信息"></a>bind—指定套接字地址信息</h2><p>调用socket函数之后已经确定了协议族和传输协议，但是还没有确定本地协议，即套接字地址信息。bind函数描述如下：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bind</span><span class="params">(<span class="keyword">int</span> sockfd,<span class="keyword">const</span> struct sockaddr *addr,<span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure></p>
 <p>sockfd是前面调用socket函数返回的套接字描述符，用于将协议地址绑定到指定套接字中去，返回0表明成功，-1表示失败，具体失败原因，被存放于全局变量errno。addr是套接字地址，它并不是我们前面所看到的sockaddr_in类型，而是struct sockaddr，因为struct sockaddr是通用类型，不仅适用于IPV4套接字地址，也需要适用于IPV6套接字地址。</p>
@@ -4645,7 +4686,7 @@
 </ul>
 ]]></content>
       <categories>
-        <category>C</category>
+        <category>编译链接</category>
       </categories>
       <tags>
         <tag>C</tag>
@@ -5282,7 +5323,7 @@
 <p>总结:安装成功安装lua的前提是linux上有readline和ncurses库.</p>
 <h2 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h2><p>和Python类似，它也可以交互式编程，在命令行输入lua后即可进入：<br><figure class="highlight lua"><table><tr><td class="code"><pre><span class="line">&gt;<span class="built_in">print</span>(<span class="string">"Hello World"</span>)</span><br><span class="line">Hello World</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
 <p>当然也可以将脚本内容写在文件，例如，将上面的内容写在hello.lua：<br><figure class="highlight lua"><table><tr><td class="code"><pre><span class="line">#!/usr/<span class="keyword">local</span>/bin/lua</span><br><span class="line"><span class="built_in">print</span>(<span class="string">"Hello World"</span>)</span><br></pre></td></tr></table></figure></p>
-<p>其中第一行指定了lua解释器路径，执行：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> chmod +x hello.lua  <span class="comment">#赋予执行权限</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ./hello.lua</span></span><br><span class="line">Hello World</span><br></pre></td></tr></table></figure></p>
+<p>其中第一行指定了lua解释器路径，执行：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span> chmod +x hello.lua  #赋予执行权限</span><br><span class="line"><span class="meta">$</span> ./hello.lua</span><br><span class="line">Hello World</span><br></pre></td></tr></table></figure></p>
 <p>这里注意，如果你没有加第一行，shell就不知道用哪个解释器去解释运行，当然你也可以通过下面的方式运行：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ lua hello.lua</span><br></pre></td></tr></table></figure></p>
 <h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p>同样地，它至少有两种注释，单行注释使用—：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-- 这里是单行注释</span><br><span class="line">print(&quot;hello&quot;)</span><br></pre></td></tr></table></figure></p>
 <p>多行注释：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--[[</span><br><span class="line">多行注释</span><br><span class="line">多行注释</span><br><span class="line">--]]</span><br><span class="line">print(&quot;yanbinghu.com&quot;)</span><br></pre></td></tr></table></figure></p>
