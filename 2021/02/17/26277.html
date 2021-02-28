@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="C,">
+  <meta name="keywords" content="C,链接,">
 
 
 
@@ -88,18 +88,18 @@
 
 
 
-<meta name="description" content="泛型编程（generic programming）是程序设计语言的一种风格或范式。泛型允许程序员在强类型程序设计语言中编写代码时使用一些以后才指定的类型，在实例化时作为参数指明这些类型。">
-<meta name="keywords" content="C">
+<meta name="description" content="在《什么是强符号和弱符号》中简单介绍了强弱符号，那么强弱符号的性质有什么用呢？">
+<meta name="keywords" content="C,链接">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C语言泛型编程">
-<meta property="og:url" content="https://www.yanbinghu.com/2020/12/27/17582.html">
+<meta property="og:title" content="利用强弱符号制作插件库">
+<meta property="og:url" content="https://www.yanbinghu.com/2021/02/17/26277.html">
 <meta property="og:site_name" content="守望的个人博客">
-<meta property="og:description" content="泛型编程（generic programming）是程序设计语言的一种风格或范式。泛型允许程序员在强类型程序设计语言中编写代码时使用一些以后才指定的类型，在实例化时作为参数指明这些类型。">
+<meta property="og:description" content="在《什么是强符号和弱符号》中简单介绍了强弱符号，那么强弱符号的性质有什么用呢？">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-12-27T08:56:12.045Z">
+<meta property="og:updated_time" content="2021-02-17T02:37:27.388Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C语言泛型编程">
-<meta name="twitter:description" content="泛型编程（generic programming）是程序设计语言的一种风格或范式。泛型允许程序员在强类型程序设计语言中编写代码时使用一些以后才指定的类型，在实例化时作为参数指明这些类型。">
+<meta name="twitter:title" content="利用强弱符号制作插件库">
+<meta name="twitter:description" content="在《什么是强符号和弱符号》中简单介绍了强弱符号，那么强弱符号的性质有什么用呢？">
 
 
 
@@ -129,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="https://www.yanbinghu.com/2020/12/27/17582.html">
+  <link rel="canonical" href="https://www.yanbinghu.com/2021/02/17/26277.html">
 
 
 
 
 
-  <title>C语言泛型编程 | 守望的个人博客</title>
+  <title>利用强弱符号制作插件库 | 守望的个人博客</title>
   
 
 
@@ -355,7 +355,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.yanbinghu.com/2020/12/27/17582.html">
+    <link itemprop="mainEntityOfPage" href="https://www.yanbinghu.com/2021/02/17/26277.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="守望">
@@ -372,7 +372,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">C语言泛型编程</h2>
+          <h2 class="post-title" itemprop="name headline">利用强弱符号制作插件库</h2>
         
 
         <div class="post-meta">
@@ -385,8 +385,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-27T16:50:00+08:00">
-                2020-12-27
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-17T11:00:00+08:00">
+                2021-02-17
               </time>
             
 
@@ -401,8 +401,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-12-27T16:56:12+08:00">
-                2020-12-27
+              <time title="更新于" itemprop="dateModified" datetime="2021-02-17T10:37:27+08:00">
+                2021-02-17
               </time>
             
           </span>
@@ -420,8 +420,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index">
-                    <span itemprop="name">C</span>
+                  <a href="/categories/编译链接/" itemprop="url" rel="index">
+                    <span itemprop="name">编译链接</span>
                   </a>
                 </span>
 
@@ -437,7 +437,7 @@
 
           
           
-             <span id="/2020/12/27/17582.html" class="leancloud_visitors" data-flag-title="C语言泛型编程">
+             <span id="/2021/02/17/26277.html" class="leancloud_visitors" data-flag-title="利用强弱符号制作插件库">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -468,30 +468,48 @@
       
 
       
-        <p>泛型编程（generic programming）是程序设计语言的一种风格或范式。泛型允许程序员在强类型程序设计语言中编写代码时使用一些以后才指定的类型，在实例化时作为参数指明这些类型。<br><a id="more"></a><br>C++支持泛型编程，也就是模板，比如：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 来源：公众号【 编程珠玑】</span></span><br><span class="line"><span class="comment">// 作者：守望先生</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">T</span> <span class="title">add</span>(<span class="title">T</span> <span class="title">a</span>,<span class="title">T</span> <span class="title">b</span>)&#123;</span></span><br><span class="line">  T ret = a + b;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt; a &lt;&lt; <span class="string">" + "</span> &lt;&lt; b &lt;&lt;<span class="string">" = "</span> &lt;&lt; ret &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  add(<span class="number">1</span>,<span class="number">2</span>);  <span class="comment">// 整数相加</span></span><br><span class="line">  add(<span class="number">1.2</span>,<span class="number">2.3</span>); <span class="comment">// 浮点数相加</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>运行结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 + 2 = 3</span><br><span class="line">1.2 + 2.3 = 3.5</span><br></pre></td></tr></table></figure></p>
-<p>从上面的结果可以看到，对于调用add函数，如果传入的是整型，则按照整型加法计算，如果是浮点数，则按照浮点数进行加法计算。也就是说，add函数没有针对特定类型（泛型）。</p>
-<p>你同样可以使用<a href="https://www.yanbinghu.com/2018/11/27/34641.html">重载</a>实现上面的功能，但是存在大量重复代码。</p>
-<h2 id="C语言支持泛型编程吗？"><a href="#C语言支持泛型编程吗？" class="headerlink" title="C语言支持泛型编程吗？"></a>C语言支持泛型编程吗？</h2><p>很遗憾，C语言本身不支持真正意义上的泛型编程，但是却在一定程度上可以“实现泛型编程”。</p>
-<h2 id="Generic关键字"><a href="#Generic关键字" class="headerlink" title="_Generic关键字"></a>_Generic关键字</h2><p>_Generic是C11的关键字，通过该关键字可以有一个泛型表达式：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_Generic((value). <span class="keyword">int</span>:<span class="string">"int"</span>, <span class="keyword">float</span>:<span class="string">"float"</span>,<span class="keyword">char</span>*:<span class="string">"char*"</span>,<span class="keyword">default</span>:<span class="string">"other type"</span>)</span><br></pre></td></tr></table></figure></p>
-<p>什么意思呢？如果value是int类型，那么表达式的值就是“int”，其他的以此类推。看起来是不是和switch语句有点类似呢？<br>根据这个示例，我们来实现一个功能，打印变量或常量到底是什么类型：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 来源：公众号【编程珠玑】</span></span><br><span class="line"><span class="comment">// 作者：守望先生</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TYPE(v) _Generic((v), \</span></span><br><span class="line">    <span class="keyword">int</span>:<span class="string">"int"</span>, \</span><br><span class="line">    <span class="keyword">char</span>:<span class="string">"char"</span>, \</span><br><span class="line">    <span class="keyword">float</span>:<span class="string">"float"</span>, \</span><br><span class="line">    <span class="keyword">double</span>:<span class="string">"double"</span>, \</span><br><span class="line">    <span class="keyword">char</span>*:<span class="string">"char*"</span>, \</span><br><span class="line">    <span class="keyword">default</span>:<span class="string">"other type"</span>)</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"1 + 2 type: %s\n"</span>,TYPE(<span class="number">1</span> + <span class="number">2</span>));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"1/3 type: %s\n"</span>,TYPE(<span class="number">1</span>/<span class="number">3</span>));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"2/3 type: %s\n"</span>,TYPE((<span class="keyword">float</span>)<span class="number">2</span>/<span class="number">3</span>));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"xxx type: %s\n"</span>,TYPE(<span class="string">"xxx"</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>这里为了方便使用，我们通过define关键字，将泛型表达式简化。</p>
-<p>运行结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 + 2 type: int</span><br><span class="line">1/3 type: int</span><br><span class="line">2/3 type: float                                                        </span><br><span class="line">xxx type: char*</span><br></pre></td></tr></table></figure></p>
-<p>可以看到通过TYPE就可以获得表达式的结果类型，<strong>这对初学者来说，可真是福音了</strong>。</p>
-<h2 id="泛型算法"><a href="#泛型算法" class="headerlink" title="泛型算法"></a>泛型算法</h2><p>既然C语言有_Generic关键字了，那么我们尝试实现开头C++示例代码中的加法。看过上面的例子后，相信你已经会了：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 来源：公众号【编程珠玑】</span></span><br><span class="line"><span class="comment">// 作者：守望先生</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="comment">// int类型加法</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">addI</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d + %d = %d\n"</span>,a,b, a + b );</span><br><span class="line">    <span class="keyword">return</span> (a + b);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// double类型加法</span></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">addF</span><span class="params">(<span class="keyword">double</span> a, <span class="keyword">double</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%f + %f = %f\n"</span>,a,b, a + b );</span><br><span class="line">    <span class="keyword">return</span> (a + b);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unsupport</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"unsupport type\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ADD(a,b) _Generic((a), \</span></span><br><span class="line">    <span class="keyword">int</span>:addI(a,b),\</span><br><span class="line">    <span class="keyword">double</span>:addF(a,b), \</span><br><span class="line">    <span class="keyword">default</span>:unsupport(a,b))</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ADD(<span class="number">1</span> , <span class="number">2</span>);</span><br><span class="line">    ADD(<span class="number">1.1</span>,<span class="number">2.2</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>观察上面的代码，我们注意到：</p>
+        <p>在《<a href="https://www.yanbinghu.com/2021/02/17/26301.html">什么是强符号和弱符号</a>》中简单介绍了强弱符号，那么强弱符号的性质有什么用呢？</p>
+<a id="more"></a>
+<p>还记得在《<a href="https://www.yanbinghu.com/2021/02/17/26301.html">什么是强符号和弱符号</a>》中提到的链接原则吗？</p>
 <ul>
-<li>在这里，我们需要定义两种类型的加法（实际上，通过C++的模板，由编译器帮我们完成了这件事），由于C语言中并不支持<a href="https://www.yanbinghu.com/2018/11/27/34641.html">重载</a>，因此两个加法的函数名不一样。</li>
-<li>由于涉及参数有两个，在做类型判断时，如果两个参数不一致，可能仍然存在编译问题</li>
-<li>调用者无需区分被加对象是什么类型，都可以统一使用ADD</li>
+<li>当有强符号和弱符号时，选择使用强符号</li>
 </ul>
-<h2 id="C99的tgmath-h"><a href="#C99的tgmath-h" class="headerlink" title="C99的tgmath.h"></a>C99的tgmath.h</h2><p>前面说到，_Generic关键字在C11中才有，那么C99怎么办呢？实际上，tgmath.h中提供了一些泛型类型宏，如果math.h的函数中定义了float，double和long double版本，tgmath就会提供一个泛型类型宏。效果和前面的例子一样，举个例子：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 来源：公众号【编程珠玑】</span></span><br><span class="line"><span class="comment">// 作者：守望先生</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tgmath.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">float</span> f = <span class="number">4.0f</span>;</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">double</span> d = <span class="number">1.44</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%f\n"</span>,<span class="built_in">sqrt</span>(f)); <span class="comment">// 实际上调用了sqrtf</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%Lf\n"</span>,<span class="built_in">sqrt</span>(d)); <span class="comment">// 实际上调用了sqrtl</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>编译运行结果：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2.000000</span></span><br><span class="line"><span class="number">1.200000</span></span><br></pre></td></tr></table></figure></p>
-<p>但是不得不说，tgmath中提供的泛型宏也是有限的。</p>
-<h2 id="void-指针"><a href="#void-指针" class="headerlink" title="void *指针"></a>void *指针</h2><p>众所周知，C语言中void *指针是一种无类型指针，从这点看，也可以算是泛型指针了。而它的使用在C语言中是非常常见的，举例来说，在《<a href="https://www.yanbinghu.com/2019/01/03/3593.html">函数指针</a>》中，我们介绍了快速排序接口的使用，它的函数声明是这样的：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">qsort</span><span class="params">(<span class="keyword">void</span> *base, <span class="keyword">size_t</span> nmemb, <span class="keyword">size_t</span> size,</span></span></span><br><span class="line"><span class="function"><span class="params">                  <span class="keyword">int</span> (*compar)(<span class="keyword">const</span> <span class="keyword">void</span> *, <span class="keyword">const</span> <span class="keyword">void</span> *))</span></span>;</span><br></pre></td></tr></table></figure></p>
-<p>库函数qsort实际上就是泛型排序算法了，它可以针对任何类型的数据进行排序。当然有一个前提，就是你需要按照它的协议，实现一个compar函数，用于比较大小。</p>
-<p>像这样类似的例子，C语言中还有很多，不过相比于其他语言，如C++中的模板，这种所谓的泛型，确实有些小巫见大巫了。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>C语言语法上本身基本不支持泛型编程，但是借助_Generic关键字和一些手段，可以实现泛型编程。</p>
+<p>那么我们正可以利用这个原则做以下事情：</p>
+<ul>
+<li>定义为弱符号，如果是弱符号，使用默认行为</li>
+<li>如果链接了库，是强符号，则使用外部定义行为</li>
+</ul>
+<p>以此来实现一个类似插件的功能。通俗一点说：</p>
+<ul>
+<li>当没有插件时，使用默认行为</li>
+<li>链接了插件时，使用插件的功能</li>
+</ul>
+<h2 id="原理和示例"><a href="#原理和示例" class="headerlink" title="原理和示例"></a>原理和示例</h2><p>其原理也非常简单，举个例子：</p>
+<ul>
+<li>外部引用弱符号</li>
+<li>如果符号地址为0，则说明外部没有链接插件库，未有强符号，走默认流程</li>
+<li>如果符号地址不为0，则说明链接了插件库，执行插件库的功能。</li>
+</ul>
+<p>示例程序如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 来源：公众号【编程珠玑】</span></span><br><span class="line"><span class="comment">// 作者：守望先生</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line">__attribute__((weak)) <span class="function"><span class="keyword">void</span> <span class="title">my_print</span><span class="params">()</span></span>;</span><br><span class="line"> <span class="function"><span class="keyword">void</span> <span class="title">test_print</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 如果是强符号，说明链接了外部插件，使用外部定义</span></span><br><span class="line">    <span class="keyword">if</span>(my_print)</span><br><span class="line">    &#123;</span><br><span class="line">        my_print();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 弱符号，走默认逻辑</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"this is weak print\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    test_print();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的test_print函数是弱符号，在没有其他地方定义的情况下，也是能够正常编译运行的：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -o main main.c</span><br><span class="line">$ ./main</span><br><span class="line"><span class="keyword">this</span> is weak print</span><br></pre></td></tr></table></figure></p>
+<p>观察可执行文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ nm main |grep my_print</span><br><span class="line">           w my_print</span><br></pre></td></tr></table></figure></p>
+<p>通过nm命令我们也可以知道test_print是弱符号，它前面的修饰字符是W，代表weak。</p>
+<h2 id="插件库"><a href="#插件库" class="headerlink" title="插件库"></a>插件库</h2><p>前面的示例程序已经能否工作了，如何让它能否支持插件库呢？或者说，如何让它支持外部的插件功能呢？</p>
+<p>关于制作库（静态库或动态库制作可以参考《<a href="https://www.yanbinghu.com/2019/07/10/23906.html">手把手教你制作静态库</a>》）</p>
+<p>这里以静态库为例：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// print_plugin.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">my_print</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"this is plugin print\n"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>制作静态库：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -c print_plugin.c</span><br><span class="line">$ ar -rcs libprint_plugin.a print_plugin.o</span><br></pre></td></tr></table></figure></p>
+<h2 id="链接插件库"><a href="#链接插件库" class="headerlink" title="链接插件库"></a>链接插件库</h2><p>现在重新编译main程序，并使用插件库：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -o main main.c -L./ -lprint_plugin</span><br><span class="line">$ gcc  -o main  main.c  -L. -Wl,--whole-archive -lprint_plugin -Wl,--no-whole-archive</span><br><span class="line">$ nm main |grep my_print</span><br><span class="line">000000000000067a T my_print</span><br><span class="line">$ ./main</span><br><span class="line">this is plugin print</span><br></pre></td></tr></table></figure></p>
+<p>需要注意的是，这里在链接插件库之前，需要加上：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Wl,--whole-archive</span><br></pre></td></tr></table></figure></p>
+<p>该选项会将插件库中所有符号都链接进来，若非如此，在main.c中已经有了my_print符号，将不会链接进来，而在此之后，又要将该选项恢复。最终我们可以通过nm命令看到my_print符号已经不再是W了。也就看到了最后：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is plugin print</span><br></pre></td></tr></table></figure></p>
+<p>的打印了。</p>
+<p>也就实现了我们所谓插件的功能，换句话说，可以对目标程序进行功能的裁剪或者增加。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>由于以下几点原因，我们可以自己做一些支持插件库的程序：</p>
+<ul>
+<li>1.重复强弱符号同存在时，使用强符号</li>
+<li>2.弱符号链接不存在时，不会报错</li>
+<li>3.未链接的外部符号，地址为0，可通过判断避免访问非法地址</li>
+</ul>
+<p>再结合前面的例子分别解释一下：<br>1.这一点在《<a href="https://www.yanbinghu.com/2021/02/17/26301.html">什么是强符号和弱符号</a>》一文中已经有解释说明了<br>2.在开始的程序中，即便没有链接插件库，程序也可以正常编译链接通过，而不会报错<br>3.没有链接插件库时，由于其函数地址为0，因此，我们程序内判断，if(xxx)，当地址为0时，执行默认的行为语句。</p>
 
       
     </div>
@@ -549,7 +567,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://www.yanbinghu.com/2020/12/27/17582.html" title="C语言泛型编程">https://www.yanbinghu.com/2020/12/27/17582.html</a>
+    <a href="https://www.yanbinghu.com/2021/02/17/26277.html" title="利用强弱符号制作插件库">https://www.yanbinghu.com/2021/02/17/26277.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -566,6 +584,8 @@
           
             <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C</a>
           
+            <a href="/tags/链接/" rel="tag"><i class="fa fa-tag"></i> 链接</a>
+          
         </div>
       
 
@@ -577,8 +597,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/12/20/39641.html" rel="next" title="性能优化-使用高效内存分配器">
-                <i class="fa fa-chevron-left"></i> 性能优化-使用高效内存分配器
+              <a href="/2021/02/17/26301.html" rel="next" title="什么是强符号和弱符号？">
+                <i class="fa fa-chevron-left"></i> 什么是强符号和弱符号？
               </a>
             
           </div>
@@ -586,10 +606,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2021/02/17/26301.html" rel="prev" title="什么是强符号和弱符号？">
-                什么是强符号和弱符号？ <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -781,7 +797,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C语言支持泛型编程吗？"><span class="nav-number">1.</span> <span class="nav-text">C语言支持泛型编程吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Generic关键字"><span class="nav-number">2.</span> <span class="nav-text">_Generic关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型算法"><span class="nav-number">3.</span> <span class="nav-text">泛型算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C99的tgmath-h"><span class="nav-number">4.</span> <span class="nav-text">C99的tgmath.h</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#void-指针"><span class="nav-number">5.</span> <span class="nav-text">void *指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#原理和示例"><span class="nav-number">1.</span> <span class="nav-text">原理和示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插件库"><span class="nav-number">2.</span> <span class="nav-text">插件库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链接插件库"><span class="nav-number">3.</span> <span class="nav-text">链接插件库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>

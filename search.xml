@@ -310,6 +310,60 @@
       </tags>
   </entry>
   <entry>
+    <title>利用强弱符号制作插件库</title>
+    <url>/2021/02/17/26277.html</url>
+    <content><![CDATA[<p>在《<a href="https://www.yanbinghu.com/2021/02/17/26301.html">什么是强符号和弱符号</a>》中简单介绍了强弱符号，那么强弱符号的性质有什么用呢？</p>
+<a id="more"></a>
+<p>还记得在《<a href="https://www.yanbinghu.com/2021/02/17/26301.html">什么是强符号和弱符号</a>》中提到的链接原则吗？</p>
+<ul>
+<li>当有强符号和弱符号时，选择使用强符号</li>
+</ul>
+<p>那么我们正可以利用这个原则做以下事情：</p>
+<ul>
+<li>定义为弱符号，如果是弱符号，使用默认行为</li>
+<li>如果链接了库，是强符号，则使用外部定义行为</li>
+</ul>
+<p>以此来实现一个类似插件的功能。通俗一点说：</p>
+<ul>
+<li>当没有插件时，使用默认行为</li>
+<li>链接了插件时，使用插件的功能</li>
+</ul>
+<h2 id="原理和示例"><a href="#原理和示例" class="headerlink" title="原理和示例"></a>原理和示例</h2><p>其原理也非常简单，举个例子：</p>
+<ul>
+<li>外部引用弱符号</li>
+<li>如果符号地址为0，则说明外部没有链接插件库，未有强符号，走默认流程</li>
+<li>如果符号地址不为0，则说明链接了插件库，执行插件库的功能。</li>
+</ul>
+<p>示例程序如下：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 来源：公众号【编程珠玑】</span></span><br><span class="line"><span class="comment">// 作者：守望先生</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line">__attribute__((weak)) <span class="function"><span class="keyword">void</span> <span class="title">my_print</span><span class="params">()</span></span>;</span><br><span class="line"> <span class="function"><span class="keyword">void</span> <span class="title">test_print</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 如果是强符号，说明链接了外部插件，使用外部定义</span></span><br><span class="line">    <span class="keyword">if</span>(my_print)</span><br><span class="line">    &#123;</span><br><span class="line">        my_print();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 弱符号，走默认逻辑</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"this is weak print\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    test_print();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的test_print函数是弱符号，在没有其他地方定义的情况下，也是能够正常编译运行的：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$ gcc -o main main.c</span><br><span class="line">$ ./main</span><br><span class="line"><span class="keyword">this</span> is weak print</span><br></pre></td></tr></table></figure></p>
+<p>观察可执行文件：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ nm main |grep my_print</span><br><span class="line">           w my_print</span><br></pre></td></tr></table></figure></p>
+<p>通过nm命令我们也可以知道test_print是弱符号，它前面的修饰字符是W，代表weak。</p>
+<h2 id="插件库"><a href="#插件库" class="headerlink" title="插件库"></a>插件库</h2><p>前面的示例程序已经能否工作了，如何让它能否支持插件库呢？或者说，如何让它支持外部的插件功能呢？</p>
+<p>关于制作库（静态库或动态库制作可以参考《<a href="https://www.yanbinghu.com/2019/07/10/23906.html">手把手教你制作静态库</a>》）</p>
+<p>这里以静态库为例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// print_plugin.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">my_print</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"this is plugin print\n"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>制作静态库：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ gcc -c print_plugin.c</span><br><span class="line">$ ar -rcs libprint_plugin.a print_plugin.o</span><br></pre></td></tr></table></figure></p>
+<h2 id="链接插件库"><a href="#链接插件库" class="headerlink" title="链接插件库"></a>链接插件库</h2><p>现在重新编译main程序，并使用插件库：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ gcc -o main main.c -L./ -lprint_plugin</span><br><span class="line">$ gcc  -o main  main.c  -L. -Wl,--whole-archive -lprint_plugin -Wl,--no-whole-archive</span><br><span class="line">$ nm main |grep my_print</span><br><span class="line">000000000000067a T my_print</span><br><span class="line">$ ./main</span><br><span class="line">this is plugin print</span><br></pre></td></tr></table></figure></p>
+<p>需要注意的是，这里在链接插件库之前，需要加上：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-Wl,--whole-archive</span><br></pre></td></tr></table></figure></p>
+<p>该选项会将插件库中所有符号都链接进来，若非如此，在main.c中已经有了my_print符号，将不会链接进来，而在此之后，又要将该选项恢复。最终我们可以通过nm命令看到my_print符号已经不再是W了。也就看到了最后：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">this is plugin print</span><br></pre></td></tr></table></figure></p>
+<p>的打印了。</p>
+<p>也就实现了我们所谓插件的功能，换句话说，可以对目标程序进行功能的裁剪或者增加。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>由于以下几点原因，我们可以自己做一些支持插件库的程序：</p>
+<ul>
+<li>1.重复强弱符号同存在时，使用强符号</li>
+<li>2.弱符号链接不存在时，不会报错</li>
+<li>3.未链接的外部符号，地址为0，可通过判断避免访问非法地址</li>
+</ul>
+<p>再结合前面的例子分别解释一下：<br>1.这一点在《<a href="https://www.yanbinghu.com/2021/02/17/26301.html">什么是强符号和弱符号</a>》一文中已经有解释说明了<br>2.在开始的程序中，即便没有链接插件库，程序也可以正常编译链接通过，而不会报错<br>3.没有链接插件库时，由于其函数地址为0，因此，我们程序内判断，if(xxx)，当地址为0时，执行默认的行为语句。</p>
+]]></content>
+      <categories>
+        <category>编译链接</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
+        <tag>链接</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>什么是强符号和弱符号？</title>
     <url>/2021/02/17/26301.html</url>
     <content><![CDATA[<p>C/C++中的符号是什么？什么是强符号？什么又是弱符号？<br><a id="more"></a><br>先问一个问题，如果全局变量或者函数重复定义了，会发生什么？</p>
